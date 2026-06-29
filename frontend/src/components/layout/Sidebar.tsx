@@ -46,7 +46,7 @@ export default function Sidebar({ role }: Props) {
         ];
 
   return (
-    <aside className="w-[220px] fixed left-0 top-0 bottom-0 z-10 bg-tf-gray-900 flex flex-col">
+    <aside className="w-55 fixed left-0 top-0 bottom-0 z-10 bg-tf-gray-900 flex flex-col">
       <div className="p-5 flex items-center gap-2">
         <span className="text-white text-[15px] font-semibold tracking-tight">
           ThesisFlow
@@ -67,7 +67,7 @@ export default function Sidebar({ role }: Props) {
                 cn(
                   "mx-2 px-4 py-2.5 text-sm rounded-md flex items-center gap-3 transition-colors",
                   isActive
-                    ? "text-white bg-tf-gray-700 border-l-2 border-tf-blue-500 pl-[14px]"
+                    ? "text-white bg-tf-gray-700 border-l-2 border-tf-blue-500 pl-3.5"
                     : "text-tf-gray-400 hover:text-white hover:bg-tf-gray-700",
                 )
               }

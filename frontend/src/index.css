@@ -1,11 +1,41 @@
+@import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
-/* @layer base {
+@plugin 'tailwindcss-animate';
+
+@theme {
+  --font-sans: "DM Sans", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-serif: "Instrument Serif", serif;
+
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-tf-black: #0a0a0a;
+  --color-tf-gray-900: #1a1a1a;
+  --color-tf-gray-700: #3d3d3d;
+  --color-tf-gray-500: #6b6b65;
+  --color-tf-gray-400: #9b9b93;
+  --color-tf-gray-200: #d4d4ce;
+  --color-tf-gray-100: #e8e8e4;
+  --color-tf-gray-50: #f7f7f5;
+  --color-tf-white: #ffffff;
+  --color-tf-blue-700: #185fa5;
+  --color-tf-blue-500: #378add;
+  --color-tf-blue-50: #e6f1fb;
+  --color-tf-green-700: #1d9e75;
+  --color-tf-green-50: #e1f5ee;
+  --color-tf-amber-700: #ba7517;
+  --color-tf-amber-50: #faeeda;
+  --color-tf-red-700: #c0392b;
+  --color-tf-red-50: #fcebeb;
+}
+
+@layer base {
   .theme {
     --font-heading: var(--font-sans);
     --font-sans: "Geist Variable", sans-serif;
@@ -77,13 +107,14 @@
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.556 0 0);
   }
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  html {
-    @apply font-sans;
-  }
-} */
+}
+
+* {
+  @apply border-border outline-ring/50;
+}
+body {
+  @apply bg-background text-foreground;
+}
+html {
+  @apply font-sans;
+}

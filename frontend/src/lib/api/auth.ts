@@ -1,4 +1,4 @@
-import client from "./client";
+// import client from "./client";
 import type { AuthUser } from "@/types";
 
 export const login = async (identifier: string, password: string) => {
@@ -37,6 +37,7 @@ export const changePassword = async (
 
   if (currentPassword !== "password123") {
     throw new Error("Current password is incorrect");
+    console.log(newPassword);
   }
 
   return { success: true };

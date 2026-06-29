@@ -66,8 +66,8 @@ export default function ChangePasswordPage() {
 
   return (
     <div className="min-h-screen bg-tf-gray-50 flex flex-col pt-24 px-4">
-      <div className="w-full max-w-sm mx-auto bg-white p-6 rounded-md border border-tf-gray-100">
-        <h1 className="text-lg font-medium text-tf-black mb-1">
+      <div className="w-full max-w-sm mx-auto bg-white p-8 rounded-xl border border-tf-gray-100">
+        <h1 className="text-xl font-medium text-tf-black mb-1">
           Update your password
         </h1>
         <p className="text-sm text-tf-gray-500 mb-6">
@@ -85,7 +85,7 @@ export default function ChangePasswordPage() {
               type="password"
               {...register("currentPassword")}
               className={cn(
-                "h-9 rounded border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1",
+                "h-12 rounded-lg border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
                 errors.currentPassword &&
                   "border-tf-red-700 focus-visible:ring-tf-red-700",
               )}
@@ -105,7 +105,7 @@ export default function ChangePasswordPage() {
               type="password"
               {...register("newPassword")}
               className={cn(
-                "h-9 rounded border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1",
+                "h-12 rounded-lg border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
                 errors.newPassword &&
                   "border-tf-red-700 focus-visible:ring-tf-red-700",
               )}
@@ -125,7 +125,7 @@ export default function ChangePasswordPage() {
               type="password"
               {...register("confirmPassword")}
               className={cn(
-                "h-9 rounded border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1",
+                "h-12 rounded-lg border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
                 errors.confirmPassword &&
                   "border-tf-red-700 focus-visible:ring-tf-red-700",
               )}
@@ -140,7 +140,7 @@ export default function ChangePasswordPage() {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-tf-black text-white hover:bg-tf-gray-900 rounded-sm h-9 text-sm font-medium transition-colors mt-2"
+            className="w-full bg-tf-black text-white hover:bg-linear-to-t hover:from-tf-black hover:to-neutral-800 hover:cursor-pointer rounded-lg h-9 py-5 text-sm font-medium transition-colors duration-300 mt-2"
           >
             {isSubmitting ? "Updating..." : "Update Password"}
           </Button>
