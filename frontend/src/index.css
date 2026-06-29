@@ -10,7 +10,7 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --font-serif: "Instrument Serif", serif;
 
-  --color-border: var(--border);
+  /* --color-border: var(--border); */
   --color-ring: var(--ring);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -110,7 +110,7 @@
 }
 
 * {
-  @apply border-border outline-ring/50;
+  @apply outline-ring/50;
 }
 body {
   @apply bg-background text-foreground;

@@ -8,6 +8,8 @@ import { useAuthStore } from "@/store/authStore";
 import { Button } from "../../../@/components/ui/button";
 import { Input } from "../../../@/components/ui/input";
 import { cn } from "../../../@/lib/utils";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { EyeClosedIcon, EyeIcon } from "@hugeicons/core-free-icons";
 
 const loginSchema = z.object({
   identifier: z.string().min(1, "Enter your matric number or email"),
@@ -50,20 +52,23 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-tf-gray-50">
       {/* Left Panel - Dark accent side */}
-      <div className="md:w-1/2 bg-linear-to-r from-tf-black to-gray-800 flex flex-col justify-between p-8 md:p-12 lg:p-16">
+      <div className="md:w-1/2 bg-linear-to-r from-black to-neutral-900 flex flex-col justify-between p-8 md:p-12 lg:p-16">
         <div>
           <div className="flex items-center gap-2 mb-12">
             <span className="text-white text-2xl font-semibold tracking-tight">
               ThesisFlow
             </span>
-            <span className="text-xs hover:-translate-y-1.5 transition-all duration-200 bg-tf-gray-700 text-tf-gray-400 px-1.5 py-0.5 rounded-sm">
+            <span className="text-xs hover:-translate-y-1.5 transition-all duration-200 bg-tf-gray-700 text-tf-gray-400 px-1.5 py-0.5 rounded-full">
               Beta
             </span>
           </div>
           <h1 className="text-3xl font-medium text-white mb-8 leading-tight">
-            Manage and track final-year <br /> project submissions in one place.
+            Manage and track final-year <br />
+            <span className="font-serif italic text-4xl">
+              project submissions in one place.
+            </span>
           </h1>
-          <ul className="space-y-5 text-tf-gray-400 text-sm">
+          <ul className="space-y-5 text-tf-gray-400 text-md">
             <li className="flex items-start gap-3">
               <span className="text-white mt-0.5">✦</span>
               Centralised submission timeline
@@ -86,20 +91,22 @@ export default function LoginPage() {
       {/* Right Panel - Form */}
       <div className="md:w-1/2 flex items-center justify-center p-4 py-12 md:p-12 bg-tf-white md:bg-transparent">
         <div className="w-full max-w-md md:p-8 md:rounded-md">
-          <h2 className="text-2xl font-medium text-tf-black mb-1">Sign in</h2>
+          <h2 className="text-3xl font-serif tracking-tight font-medium text-tf-black mb-1">
+            Sign in
+          </h2>
           <p className="text-md text-tf-gray-500 mb-6">
             Enter your credentials to continue
           </p>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-tf-gray-500">
+              <label className="block text-sm font-normal text-tf-gray-500">
                 Email or Matric Number
               </label>
               <Input
                 {...register("identifier")}
                 className={cn(
-                  "h-12 rounded-lg border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
+                  "h-12 rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
                   errors.identifier &&
                     "border-tf-red-700 focus-visible:ring-tf-red-700",
                 )}
@@ -113,18 +120,18 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-tf-gray-500">
+              <label className="block text-sm font-normal text-tf-gray-500">
                 Password
               </label>
               <Input
                 type="password"
                 {...register("password")}
                 className={cn(
-                  "h-12 rounded-lg border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
+                  "h-12 rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
                   errors.password &&
                     "border-tf-red-700 focus-visible:ring-tf-red-700",
                 )}
-                placeholder="••••••••"
+                placeholder="• • • • • • • •"
               />
               {errors.password && (
                 <p className="text-xs text-tf-red-700">
@@ -142,7 +149,7 @@ export default function LoginPage() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-tf-black text-white hover:bg-linear-to-t hover:from-tf-black hover:to-neutral-800 hover:cursor-pointer rounded-lg h-9 py-5 text-sm font-medium transition-colors duration-300 mt-2"
+              className="w-full bg-tf-black text-white hover:bg-linear-to-t hover:from-tf-black hover:to-neutral-800 hover:cursor-pointer rounded-xl h-9 py-6 text-sm font-medium transition-colors duration-300 mt-2"
             >
               {isSubmitting ? "Signing in..." : "Sign in"}
             </Button>

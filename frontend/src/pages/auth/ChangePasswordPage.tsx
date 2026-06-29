@@ -66,8 +66,8 @@ export default function ChangePasswordPage() {
 
   return (
     <div className="min-h-screen bg-tf-gray-50 flex flex-col pt-24 px-4">
-      <div className="w-full max-w-sm mx-auto bg-white p-8 rounded-xl border border-tf-gray-100">
-        <h1 className="text-xl font-medium text-tf-black mb-1">
+      <div className="w-full max-w-md mx-auto bg-white p-10 rounded-xl border border-tf-gray-100">
+        <h1 className="text-2xl font-medium text-tf-black mb-1">
           Update your password
         </h1>
         <p className="text-sm text-tf-gray-500 mb-6">
@@ -76,16 +76,16 @@ export default function ChangePasswordPage() {
             : "Enter your current password and choose a new one."}
         </p>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div className="space-y-1.5">
-            <label className="block text-[12px] font-medium text-tf-gray-500">
+            <label className="block text-[13px] font-medium text-tf-gray-500">
               Current Password
             </label>
             <Input
               type="password"
               {...register("currentPassword")}
               className={cn(
-                "h-12 rounded-lg border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
+                "h-12 rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
                 errors.currentPassword &&
                   "border-tf-red-700 focus-visible:ring-tf-red-700",
               )}
@@ -98,14 +98,14 @@ export default function ChangePasswordPage() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-[12px] font-medium text-tf-gray-500">
+            <label className="block text-[13px] font-medium text-tf-gray-500">
               New Password
             </label>
             <Input
               type="password"
               {...register("newPassword")}
               className={cn(
-                "h-12 rounded-lg border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
+                "h-12 rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
                 errors.newPassword &&
                   "border-tf-red-700 focus-visible:ring-tf-red-700",
               )}
@@ -118,14 +118,14 @@ export default function ChangePasswordPage() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-[12px] font-medium text-tf-gray-500">
+            <label className="block text-[13px] font-medium text-tf-gray-500">
               Confirm New Password
             </label>
             <Input
               type="password"
               {...register("confirmPassword")}
               className={cn(
-                "h-12 rounded-lg border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
+                "h-12 rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
                 errors.confirmPassword &&
                   "border-tf-red-700 focus-visible:ring-tf-red-700",
               )}
@@ -140,7 +140,7 @@ export default function ChangePasswordPage() {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-tf-black text-white hover:bg-linear-to-t hover:from-tf-black hover:to-neutral-800 hover:cursor-pointer rounded-lg h-9 py-5 text-sm font-medium transition-colors duration-300 mt-2"
+            className="w-full bg-tf-black text-white hover:bg-linear-to-t hover:from-tf-black hover:to-neutral-800 hover:cursor-pointer rounded-xl h-9 py-6 text-sm font-medium transition-colors duration-300 mt-2"
           >
             {isSubmitting ? "Updating..." : "Update Password"}
           </Button>

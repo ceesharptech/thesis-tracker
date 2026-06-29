@@ -58,12 +58,12 @@ export default function Sidebar({ role }: Props) {
         ];
 
   return (
-    <aside className="w-55 fixed left-0 top-0 bottom-0 z-10 px-2 bg-tf-gray-50 flex flex-col border-r border-gray-200">
+    <aside className="w-55 fixed left-0 top-0 bottom-0 z-10 px-2 bg-tf-gray-900 flex flex-col">
       <div className="p-5 flex items-center gap-2 mb-4 mt-2">
-        <span className="text-tf-gray-900 text-xl font-semibold tracking-tight">
+        <span className="text-white text-xl font-semibold tracking-tight">
           ThesisFlow
         </span>
-        <span className="text-xs bg-tf-blue-50 text-tf-gray-500 px-1.5 py-0.5 rounded-full">
+        <span className="text-xs bg-tf-gray-700 text-tf-gray-400 px-1.5 py-0.5 rounded-full">
           Beta
         </span>
       </div>
@@ -78,8 +78,8 @@ export default function Sidebar({ role }: Props) {
                 cn(
                   "mx-2 px-4 py-2.5 text-sm rounded-full flex items-center gap-3 transition-colors",
                   isActive
-                    ? "text-tf-gray-900 bg-tf-gray-100 pl-3.5 font-medium"
-                    : "text-tf-gray-500 hover:text-tf-gray-900 hover:bg-tf-gray-100",
+                    ? "text-white bg-neutral-800 pl-3.5"
+                    : "text-tf-gray-400 hover:text-white hover:bg-neutral-800",
                 )
               }
             >
@@ -90,16 +90,16 @@ export default function Sidebar({ role }: Props) {
         })}
       </nav>
 
-      <div className="p-4 mt-auto mb-4 ">
+      <div className="p-4 mt-auto mb-4">
         <div className="flex flex-col mb-5 ">
-          <span className="text-tf-gray-900 text-sm font-medium truncate">
+          <span className="text-white text-sm font-medium truncate">
             {user?.name || "User"}
           </span>
-          <span className="text-tf-gray-500 text-xs capitalize">{role}</span>
+          <span className="text-tf-gray-400 text-xs capitalize">{role}</span>
         </div>
         <button
           onClick={handleSignOut}
-          className="flex items-center gap-3 w-full  px-5 py-3 text-sm bg-tf-gray-900 rounded-full hover:bg-neutral-950 text-white hover:cursor-pointer transition-colors"
+          className="flex items-center gap-3 w-full  px-5 py-3 text-sm bg-tf-gray-100 rounded-full hover:bg-tf-gray-200 text-tf-gray-900 hover:cursor-pointer transition-colors"
         >
           <HugeiconsIcon icon={LogOut} size={24} />
           Sign out

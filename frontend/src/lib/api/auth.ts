@@ -16,7 +16,7 @@ export const login = async (identifier: string, password: string) => {
     name: "Dr. Supervisor",
     role: "supervisor", // Change to 'student' to test student flow
     identifier: identifier,
-    isFirstLogin: true, // Change to false to test direct-to-dashboard flow
+    isFirstLogin: false, // Change to false to test direct-to-dashboard flow
   };
 
   return { access_token: "mock-jwt-token", user: mockUser };
