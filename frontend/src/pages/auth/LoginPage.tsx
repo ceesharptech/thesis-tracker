@@ -56,7 +56,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-tf-gray-50">
       {/* Left Panel - Dark accent side (Becomes a compact top header on mobile) */}
-      <div className="w-full md:w-1/2 bg-linear-to-r from-black to-neutral-900 flex flex-col justify-between p-8 md:p-12 lg:p-16 min-h-[200px] md:min-h-0">
+      <div className="w-full hidden md:w-1/2 bg-linear-to-r from-black to-neutral-900 lg:flex flex-col justify-between p-8 md:p-12 lg:p-16 min-h-50 md:min-h-0">
         <div>
           <div className="flex items-center gap-2 mb-6 md:mb-12">
             <span className="text-white text-xl md:text-2xl font-semibold tracking-tight">
@@ -95,12 +95,20 @@ export default function LoginPage() {
       {/* Right Panel - Form */}
       <div className="w-full md:w-1/2 flex items-center justify-center p-6 py-10 md:p-12 bg-tf-gray-50 md:bg-transparent flex-1">
         <div className="w-full max-w-md md:p-8 md:rounded-md">
-          <h2 className="text-3xl font-serif tracking-tight font-medium text-tf-black mb-1">
-            Sign in
-          </h2>
-          <p className="text-md text-tf-gray-500 mb-6 md:mb-8">
-            Select your role to continue
-          </p>
+          <div className="lg:hidden flex items-center mb-10 gap-2">
+            <div className="rounded-full w-6 h-6 bg-linear-to-r from-black to-neutral-600"></div>
+            <h2 className="text-lg font-semibold tracking-tighter text-tf-black">
+              ThesisFlow
+            </h2>
+          </div>
+          <div className="flex flex-col items-start">
+            <h2 className="text-3xl font-serif tracking-tight font-medium text-tf-black mb-1">
+              Sign in
+            </h2>
+            <p className="text-md text-tf-gray-500 mb-6 md:mb-8">
+              Select your role to continue
+            </p>
+          </div>
 
           {/* Role Toggle Switch */}
           <div className="flex bg-tf-gray-100 p-1.5 rounded-2xl mb-8">
