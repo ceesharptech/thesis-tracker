@@ -1,72 +1,31 @@
-// src/lib/api/supervisor.ts
 import client from "./client";
-import type {
-  Student,
-  Submission,
-  Comment,
-  StudentImportRow,
-  PublishabilityStatus,
-} from "@/types";
+import type { Student, StudentImportRow } from "@/types";
 
 export const getStudents = async () => {
-  // GET /ROUTE_PLACEHOLDER/supervisor/students
-  const res = await client.get("ROUTE_PLACEHOLDER/supervisor/students");
+  const res = await client.get("/supervisor/students");
   return res.data as Student[];
 };
 
-export const seedStudents = async (rows: StudentImportRow[]) => {
-  // POST /ROUTE_PLACEHOLDER/supervisor/students/seed
-  // Body: { students: StudentImportRow[] }
-  // Response: { created: number, skipped: number, errors: string[] }
-  const res = await client.post("ROUTE_PLACEHOLDER/supervisor/students/seed", {
-    students: rows,
+export const getDashboardStats = async () => {
+  const res = await client.get("/supervisor/dashboard");
+  return res.data as {
+    total_students: number;
+    total_submissions: number;
+    pending_reviews: number;
+    publishable_count: number;
+  };
+};
+
+export const uploadStudentsExcel = async (file: File) => {
+  const form = new FormData();
+  form.append("file", file);
+  const res = await client.post("/supervisor/upload-students", form, {
+    headers: { "Content-Type": "multipart/form-data" },
   });
-  return res.data as { created: number; skipped: number; errors: string[] };
+  return res.data as { imported: number; failed: StudentImportRow[] };
 };
 
 export const getStudentDetail = async (studentId: string) => {
-  // GET /ROUTE_PLACEHOLDER/supervisor/students/:id
-  const res = await client.get(
-    `ROUTE_PLACEHOLDER/supervisor/students/${studentId}`,
-  );
+  const res = await client.get(`/supervisor/student/${studentId}`);
   return res.data as Student;
-};
-
-export const getStudentSubmissions = async (studentId: string) => {
-  // GET /ROUTE_PLACEHOLDER/supervisor/students/:id/submissions
-  const res = await client.get(
-    `ROUTE_PLACEHOLDER/supervisor/students/${studentId}/submissions`,
-  );
-  return res.data as Submission[];
-};
-
-export const updatePublishabilityStatus = async (
-  studentId: string,
-  status: PublishabilityStatus,
-) => {
-  // PATCH /ROUTE_PLACEHOLDER/supervisor/students/:id/status
-  // Body: { status }
-  const res = await client.patch(
-    `ROUTE_PLACEHOLDER/supervisor/students/${studentId}/status`,
-    { status },
-  );
-  return res.data as { success: boolean };
-};
-
-export const getComments = async (submissionId: string) => {
-  // GET /ROUTE_PLACEHOLDER/supervisor/submissions/:id/comments
-  const res = await client.get(
-    `ROUTE_PLACEHOLDER/supervisor/submissions/${submissionId}/comments`,
-  );
-  return res.data as Comment[];
-};
-
-export const addComment = async (submissionId: string, body: string) => {
-  // POST /ROUTE_PLACEHOLDER/supervisor/submissions/:id/comments
-  // Body: { body }
-  const res = await client.post(
-    `ROUTE_PLACEHOLDER/supervisor/submissions/${submissionId}/comments`,
-    { body },
-  );
-  return res.data as Comment;
 };
