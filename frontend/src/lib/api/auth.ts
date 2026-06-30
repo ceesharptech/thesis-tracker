@@ -14,7 +14,7 @@ export const login = async (identifier: string, password: string) => {
   const mockUser: AuthUser = {
     id: "user-123",
     name: "Dr. Supervisor",
-    role: "supervisor", // Change to 'student' to test student flow
+    role: "student", // Change to 'student' to test student flow
     identifier: identifier,
     isFirstLogin: false, // Change to false to test direct-to-dashboard flow
   };

@@ -65,12 +65,12 @@ export default function ChangePasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-tf-gray-50 flex flex-col pt-24 px-4">
-      <div className="w-full max-w-md mx-auto bg-white p-10 rounded-xl border border-tf-gray-100">
+    <div className="min-h-screen bg-tf-gray-50 flex flex-col pt-12 md:pt-24 px-4 md:px-6">
+      <div className="w-full max-w-md mx-auto bg-white p-6 md:p-10 rounded-xl border border-tf-gray-100 shadow-xs md:shadow-none">
         <h1 className="text-2xl font-medium text-tf-black mb-1">
           Update your password
         </h1>
-        <p className="text-sm text-tf-gray-500 mb-6">
+        <p className="text-sm text-tf-gray-500 mb-6 md:mb-8">
           {user?.isFirstLogin
             ? "Please change your temporary password to continue."
             : "Enter your current password and choose a new one."}
@@ -140,7 +140,7 @@ export default function ChangePasswordPage() {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-tf-black text-white hover:bg-linear-to-t hover:from-tf-black hover:to-neutral-800 hover:cursor-pointer rounded-xl h-9 py-6 text-sm font-medium transition-colors duration-300 mt-2"
+            className="w-full bg-tf-black text-white hover:bg-linear-to-t hover:from-tf-black hover:to-neutral-800 hover:cursor-pointer rounded-xl h-9 py-6 text-sm font-medium transition-colors duration-300 mt-4"
           >
             {isSubmitting ? "Updating..." : "Update Password"}
           </Button>
