@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
-from models import Student, User, UserRole, Submission, PublishabilityStatus
+from models import Student, User, UserRole, Submission, PublishabilityStatus, Comment
 from schemas import StudentListItem, SupervisorDashboardStats, BulkImportResponse, StudentImportRow
 from dependencies import require_supervisor
 from auth import hash_password
