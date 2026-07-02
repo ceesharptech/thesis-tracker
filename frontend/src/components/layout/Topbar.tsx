@@ -25,7 +25,7 @@ export default function Topbar() {
   const { title, showUploadBtn } = getPageInfo();
 
   return (
-    <header className="h-[60px] md:h-[72px] bg-white border-b border-tf-gray-100 flex items-center justify-between px-4 md:px-8 shrink-0 sticky top-0 z-10">
+    <header className="h-15 md:h-18 bg-white border-b border-tf-gray-100 flex items-center justify-between px-4 md:px-8 shrink-0 sticky top-0 z-10">
       <h1 className="text-lg md:text-xl font-medium text-tf-black">{title}</h1>
 
       {showUploadBtn && (
