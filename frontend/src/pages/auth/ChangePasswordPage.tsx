@@ -8,6 +8,10 @@ import { useAuthStore } from "@/store/authStore";
 import { Button } from "../../../@/components/ui/button";
 import { Input } from "../../../@/components/ui/input";
 import { cn } from "../../../@/lib/utils";
+// Add useState and the Hugeicons imports
+import { useState } from "react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ViewIcon, ViewOffSlashIcon } from "@hugeicons/core-free-icons";
 
 const passwordSchema = z
   .object({
@@ -31,6 +35,10 @@ export default function ChangePasswordPage() {
   const user = useAuthStore((s) => s.user);
   const setAuth = useAuthStore((s) => s.setAuth);
   const token = useAuthStore((s) => s.token);
+
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     register,
@@ -81,15 +89,27 @@ export default function ChangePasswordPage() {
             <label className="block text-[13px] font-medium text-tf-gray-500">
               Current Password
             </label>
-            <Input
-              type="password"
-              {...register("currentPassword")}
-              className={cn(
-                "h-12 rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
-                errors.currentPassword &&
-                  "border-tf-red-700 focus-visible:ring-tf-red-700",
-              )}
-            />
+            <div className="relative">
+              <Input
+                type={showCurrentPassword ? "text" : "password"}
+                {...register("currentPassword")}
+                className={cn(
+                  "h-12 w-full rounded-xl border-tf-gray-200 text-sm bg-white pr-12 focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
+                  errors.currentPassword &&
+                    "border-tf-red-700 focus-visible:ring-tf-red-700",
+                )}
+              />
+              <button
+                type="button"
+                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-tf-gray-400 hover:text-tf-gray-900 transition-colors"
+              >
+                <HugeiconsIcon
+                  icon={showCurrentPassword ? ViewOffSlashIcon : ViewIcon}
+                  size={20}
+                />
+              </button>
+            </div>
             {errors.currentPassword && (
               <p className="text-xs text-tf-red-700">
                 {errors.currentPassword.message}
@@ -101,15 +121,27 @@ export default function ChangePasswordPage() {
             <label className="block text-[13px] font-medium text-tf-gray-500">
               New Password
             </label>
-            <Input
-              type="password"
-              {...register("newPassword")}
-              className={cn(
-                "h-12 rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
-                errors.newPassword &&
-                  "border-tf-red-700 focus-visible:ring-tf-red-700",
-              )}
-            />
+            <div className="relative">
+              <Input
+                type={showNewPassword ? "text" : "password"}
+                {...register("newPassword")}
+                className={cn(
+                  "h-12 w-full rounded-xl border-tf-gray-200 text-sm bg-white pr-12 focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
+                  errors.newPassword &&
+                    "border-tf-red-700 focus-visible:ring-tf-red-700",
+                )}
+              />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-tf-gray-400 hover:text-tf-gray-900 transition-colors"
+              >
+                <HugeiconsIcon
+                  icon={showNewPassword ? ViewOffSlashIcon : ViewIcon}
+                  size={20}
+                />
+              </button>
+            </div>
             {errors.newPassword && (
               <p className="text-xs text-tf-red-700">
                 {errors.newPassword.message}
@@ -121,15 +153,27 @@ export default function ChangePasswordPage() {
             <label className="block text-[13px] font-medium text-tf-gray-500">
               Confirm New Password
             </label>
-            <Input
-              type="password"
-              {...register("confirmPassword")}
-              className={cn(
-                "h-12 rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
-                errors.confirmPassword &&
-                  "border-tf-red-700 focus-visible:ring-tf-red-700",
-              )}
-            />
+            <div className="relative">
+              <Input
+                type={showConfirmPassword ? "text" : "password"}
+                {...register("confirmPassword")}
+                className={cn(
+                  "h-12 w-full rounded-xl border-tf-gray-200 text-sm bg-white pr-12 focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
+                  errors.confirmPassword &&
+                    "border-tf-red-700 focus-visible:ring-tf-red-700",
+                )}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-tf-gray-400 hover:text-tf-gray-900 transition-colors"
+              >
+                <HugeiconsIcon
+                  icon={showConfirmPassword ? ViewOffSlashIcon : ViewIcon}
+                  size={20}
+                />
+              </button>
+            </div>
             {errors.confirmPassword && (
               <p className="text-xs text-tf-red-700">
                 {errors.confirmPassword.message}

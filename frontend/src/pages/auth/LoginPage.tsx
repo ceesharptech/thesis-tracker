@@ -8,6 +8,9 @@ import { useAuthStore } from "@/store/authStore";
 import { Button } from "../../../@/components/ui/button";
 import { Input } from "../../../@/components/ui/input";
 import { cn } from "../../../@/lib/utils";
+// Add ViewIcon and ViewOffSlashIcon to your Hugeicons imports
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ViewIcon, ViewOffSlashIcon } from "@hugeicons/core-free-icons";
 
 const loginSchema = z.object({
   identifier: z.string().min(1, "Please enter your login credential"),
@@ -25,6 +28,8 @@ export default function LoginPage() {
   const [loginRole, setLoginRole] = useState<"student" | "supervisor">(
     "student",
   );
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -175,16 +180,28 @@ export default function LoginPage() {
               <label className="block text-sm font-normal text-tf-gray-500">
                 Password
               </label>
-              <Input
-                type="password"
-                {...register("password")}
-                className={cn(
-                  "h-12 rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
-                  errors.password &&
-                    "border-tf-red-700 focus-visible:ring-tf-red-700",
-                )}
-                placeholder="• • • • • • • •"
-              />
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  {...register("password")}
+                  className={cn(
+                    "h-12 w-full rounded-xl border-tf-gray-200 text-sm bg-white pr-12 focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
+                    errors.password &&
+                      "border-tf-red-700 focus-visible:ring-tf-red-700",
+                  )}
+                  placeholder="• • • • • • • •"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-tf-gray-400 hover:text-tf-gray-900 transition-colors"
+                >
+                  <HugeiconsIcon
+                    icon={showPassword ? ViewIcon : ViewOffSlashIcon}
+                    size={20}
+                  />
+                </button>
+              </div>
               {errors.password && (
                 <p className="text-xs text-tf-red-700">
                   {errors.password.message}
