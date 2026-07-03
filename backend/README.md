@@ -73,11 +73,14 @@ To reset the database, simply delete `thesisflow.db` and restart the server.
 
 ## Seed Data
 
-A default supervisor account is seeded automatically on startup if it does not already exist:
+Default supervisor accounts are seeded automatically on startup if they do not already exist:
 
-- **Identifier:** `supervisor`
-- **Password:** `password123`
-- **Role:** Supervisor
+| Identifier | Password | Role |
+|------------|----------|------|
+| `supervisor` | `password123` | Supervisor |
+| `supervisor@university.edu` | `password123` | Supervisor |
+
+Supervisors can log in with either identifier above.
 
 To seed additional demo students, run:
 

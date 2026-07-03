@@ -117,7 +117,13 @@ export default function LoginPage() {
           </div>
 
           {/* Role Toggle Switch */}
-          <div className="flex bg-tf-gray-100 p-1.5 rounded-2xl mb-8">
+          <div className="relative flex bg-tf-gray-100 p-1.5 rounded-2xl mb-8">
+            <div
+              className={cn(
+                "absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] rounded-xl bg-white shadow-sm transition-all duration-300 ease-out",
+                loginRole === "student" ? "left-1.5" : "left-[calc(50%+3px)]",
+              )}
+            />
             <button
               type="button"
               onClick={() => {
@@ -126,9 +132,9 @@ export default function LoginPage() {
                 setErrorMsg(null);
               }}
               className={cn(
-                "flex-1 text-sm font-medium py-2.5 rounded-xl transition-all duration-200 hover:cursor-pointer",
+                "relative z-10 flex-1 text-sm font-medium py-2.5 rounded-xl transition-colors duration-200 hover:cursor-pointer",
                 loginRole === "student"
-                  ? "bg-white shadow-sm text-tf-black"
+                  ? "text-tf-black"
                   : "text-tf-gray-500 hover:text-tf-gray-900",
               )}
             >
@@ -142,9 +148,9 @@ export default function LoginPage() {
                 setErrorMsg(null);
               }}
               className={cn(
-                "flex-1 text-sm font-medium py-2.5 rounded-xl transition-all duration-200 hover:cursor-pointer",
+                "relative z-10 flex-1 text-sm font-medium py-2.5 rounded-xl transition-colors duration-200 hover:cursor-pointer",
                 loginRole === "supervisor"
-                  ? "bg-white shadow-sm text-tf-black"
+                  ? "text-tf-black"
                   : "text-tf-gray-500 hover:text-tf-gray-900",
               )}
             >
