@@ -82,13 +82,7 @@ Default supervisor accounts are seeded automatically on startup if they do not a
 
 Supervisors can log in with either identifier above.
 
-To seed additional demo students, run:
-
-```bash
-python seed.py
-```
-
-This creates 5 test student accounts, all with the default password `Caleb123`.
+Students are imported via the **Upload Students** page in the frontend, using the `students.xlsx` file in the project root. Imported students receive the default password `Caleb123` and are flagged for first-login password change.
 
 ## File Uploads
 
