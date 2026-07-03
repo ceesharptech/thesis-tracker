@@ -57,6 +57,8 @@ type RawStudent = {
   lastSubmissionAt?: string | null;
   last_chapter_submitted?: string | null;
   lastChapterSubmitted?: string | null;
+  supervisor_notes?: string | null;
+  supervisorNotes?: string | null;
 };
 
 export const getStudents = async () => {
@@ -75,6 +77,7 @@ export const getStudents = async () => {
     lastSubmissionAt: student.last_submission_at ?? student.lastSubmissionAt,
     lastChapterSubmitted:
       student.last_chapter_submitted ?? student.lastChapterSubmitted,
+    supervisorNotes: student.supervisor_notes ?? student.supervisorNotes,
   })) as Student[];
 };
 
@@ -111,6 +114,7 @@ export const getStudentDetail = async (studentId: string) => {
     lastSubmissionAt: res.data.last_submission_at ?? res.data.lastSubmissionAt,
     lastChapterSubmitted:
       res.data.last_chapter_submitted ?? res.data.lastChapterSubmitted,
+    supervisorNotes: res.data.supervisor_notes ?? res.data.supervisorNotes,
   } as Student;
 };
 
@@ -147,6 +151,25 @@ export const updatePublishabilityStatus = async (
     lastSubmissionAt: res.data.last_submission_at ?? res.data.lastSubmissionAt,
     lastChapterSubmitted:
       res.data.last_chapter_submitted ?? res.data.lastChapterSubmitted,
+    supervisorNotes: res.data.supervisor_notes ?? res.data.supervisorNotes,
+  } as Student;
+};
+
+export const updateStudentNotes = async (studentId: string, notes: string) => {
+  const res = await client.put(`/supervisor/student/${studentId}/notes`, {
+    notes,
+  });
+  return {
+    ...res.data,
+    matricNumber: res.data.matric_number ?? res.data.matricNumber,
+    projectTitle: res.data.project_title ?? res.data.projectTitle,
+    publishabilityStatus:
+      res.data.publishability_status ?? res.data.publishabilityStatus,
+    submissionCount: res.data.submission_count ?? res.data.submissionCount,
+    lastSubmissionAt: res.data.last_submission_at ?? res.data.lastSubmissionAt,
+    lastChapterSubmitted:
+      res.data.last_chapter_submitted ?? res.data.lastChapterSubmitted,
+    supervisorNotes: res.data.supervisor_notes ?? res.data.supervisorNotes,
   } as Student;
 };
 

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
 from models import Student, User, UserRole, Submission, PublishabilityStatus, Comment
-from schemas import StudentListItem, SupervisorDashboardStats, BulkImportResponse, StudentImportRow, SubmissionOut, CommentOut, CommentCreate, PublishabilityUpdate
+from schemas import StudentListItem, SupervisorDashboardStats, BulkImportResponse, StudentImportRow, SubmissionOut, CommentOut, CommentCreate, PublishabilityUpdate, SupervisorNotesUpdate
 from dependencies import require_supervisor, get_current_user
 from auth import hash_password
 import openpyxl
@@ -141,6 +141,20 @@ def update_publishability(
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
     student.publishability_status = req.status
+    db.commit()
+    db.refresh(student)
+    return student
+
+@router.put("/student/{student_id}/notes", response_model=StudentListItem)
+def update_supervisor_notes(
+    student_id: str,
+    req: SupervisorNotesUpdate,
+    db: Session = Depends(get_db),
+):
+    student = db.query(Student).filter(Student.id == student_id).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+    student.supervisor_notes = req.notes
     db.commit()
     db.refresh(student)
     return student

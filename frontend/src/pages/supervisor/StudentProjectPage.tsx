@@ -7,23 +7,26 @@ import {
   getComments,
   addComment,
   updatePublishabilityStatus,
+  updateStudentNotes,
 } from "@/lib/api/supervisor";
 import PageWrapper from "@/components/layout/PageWrapper";
 import ChapterBadge from "@/components/shared/ChapterBadge";
 import FileTypeBadge from "@/components/shared/FileTypeBadge";
 import { Button } from "../../../@/components/ui/button";
 import { Input } from "../../../@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../../@/components/ui/select";
-import { PUBLISHABILITY_OPTIONS } from "@/lib/constants";
 import { getErrorMessage } from "@/lib/error";
 import { formatDistanceToNow } from "date-fns";
 import type { Student, Submission, Comment, PublishabilityStatus } from "@/types";
+
+const STATUS_BUTTONS: {
+  value: PublishabilityStatus;
+  label: string;
+  variant: "default" | "outline" | "secondary" | "destructive";
+}[] = [
+  { value: "publishable", label: "Approve", variant: "default" },
+  { value: "needs_further_work", label: "Needs Work", variant: "secondary" },
+  { value: "disapproved", label: "Disapprove", variant: "destructive" },
+];
 
 export default function StudentProjectPage() {
   const { id } = useParams<{ id: string }>();
@@ -32,6 +35,8 @@ export default function StudentProjectPage() {
   const [comments, setComments] = useState<Record<string, Comment[]>>({});
   const [loading, setLoading] = useState(true);
   const [commentDraft, setCommentDraft] = useState<Record<string, string>>({});
+  const [notes, setNotes] = useState("");
+  const [savingNotes, setSavingNotes] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -41,6 +46,7 @@ export default function StudentProjectPage() {
         submissionsData = subsData;
         setStudent(studentData);
         setSubmissions(subsData);
+        setNotes(studentData.supervisorNotes || "");
         return Promise.all(subsData.map((sub) => getComments(sub.id)));
       })
       .then((commentsData) => {
@@ -59,9 +65,23 @@ export default function StudentProjectPage() {
     try {
       const updated = await updatePublishabilityStatus(id, status);
       setStudent(updated);
-      toast.success("Publishability status updated");
+      toast.success("Status updated");
     } catch (err) {
       toast.error(getErrorMessage(err) || "Failed to update status");
+    }
+  };
+
+  const handleSaveNotes = async () => {
+    if (!id || !student) return;
+    setSavingNotes(true);
+    try {
+      const updated = await updateStudentNotes(id, notes);
+      setStudent(updated);
+      toast.success("Notes saved");
+    } catch (err) {
+      toast.error(getErrorMessage(err) || "Failed to save notes");
+    } finally {
+      setSavingNotes(false);
     }
   };
 
@@ -101,33 +121,27 @@ export default function StudentProjectPage() {
     <PageWrapper>
       {/* Header */}
       <div className="bg-white rounded-xl border border-tf-gray-100 p-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-5">
           <div>
             <h1 className="text-xl font-medium text-tf-black">{student.name}</h1>
-            <p className="text-sm text-tf-gray-500 font-mono mt-0.5">
+            <p className="text-sm text-tf-gray-500 font-mono mt-1">
               {student.matricNumber} · {student.department}
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-tf-gray-500">Publishability:</span>
-            <Select
-              value={student.publishabilityStatus || "null"}
-              onValueChange={(value) =>
-                handleStatusChange(value === "null" ? null : (value as PublishabilityStatus))
-              }
-            >
-              <SelectTrigger className="w-[180px] rounded-xl h-10">
-                <SelectValue placeholder="Set status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="null">No Status</SelectItem>
-                {PUBLISHABILITY_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+
+          {/* Status action buttons */}
+          <div className="flex flex-wrap items-center gap-2">
+            {STATUS_BUTTONS.map((btn) => (
+              <Button
+                key={btn.value}
+                type="button"
+                variant={student.publishabilityStatus === btn.value ? btn.variant : "outline"}
+                onClick={() => handleStatusChange(btn.value)}
+                className="rounded-xl h-10 px-4 text-sm"
+              >
+                {btn.label}
+              </Button>
+            ))}
           </div>
         </div>
 
@@ -137,6 +151,26 @@ export default function StudentProjectPage() {
           </h2>
           <p className="text-base text-tf-black mt-1">{student.projectTitle}</p>
         </div>
+      </div>
+
+      {/* Supervisor Notes */}
+      <div className="bg-white rounded-xl border border-tf-gray-100 p-6">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-lg font-medium text-tf-black">Supervisor Notes</h2>
+          <Button
+            onClick={handleSaveNotes}
+            disabled={savingNotes}
+            className="bg-tf-black text-white rounded-xl h-9 px-4 text-sm"
+          >
+            {savingNotes ? "Saving..." : "Save Notes"}
+          </Button>
+        </div>
+        <textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="Add general feedback about this student's project..."
+          className="w-full min-h-[120px] rounded-xl border border-tf-gray-200 p-3 text-sm text-tf-black placeholder:text-tf-gray-400 focus:outline-none focus:ring-2 focus:ring-tf-blue-700 focus:ring-offset-1 resize-y"
+        />
       </div>
 
       {/* Submissions */}
@@ -154,7 +188,7 @@ export default function StudentProjectPage() {
             >
               <div className="p-5 border-b border-tf-gray-100">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-3">
                     <ChapterBadge label={sub.chapterLabel} />
                     <FileTypeBadge type={sub.fileType} />
                     <span className="text-sm text-tf-gray-500">

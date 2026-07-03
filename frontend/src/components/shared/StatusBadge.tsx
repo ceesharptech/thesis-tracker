@@ -25,6 +25,12 @@ export default function StatusBadge({ status }: Props) {
       dot: "bg-tf-amber-700",
       label: "Needs Further Work",
     },
+    disapproved: {
+      bg: "bg-tf-red-50",
+      text: "text-tf-red-700",
+      dot: "bg-tf-red-700",
+      label: "Disapproved",
+    },
     null: {
       bg: "bg-tf-gray-100",
       text: "text-tf-gray-500",

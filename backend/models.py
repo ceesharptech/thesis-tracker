@@ -12,6 +12,7 @@ class PublishabilityStatus(str, enum.Enum):
     PUBLISHABLE = "publishable"
     NOT_PUBLISHABLE = "not_publishable"
     NEEDS_FURTHER_WORK = "needs_further_work"
+    DISAPPROVED = "disapproved"
 
 class ChapterLabel(str, enum.Enum):
     CHAPTER_1 = "Chapter 1"
@@ -46,6 +47,7 @@ class Student(Base):
     submission_count = Column(Integer, default=0)
     last_submission_at = Column(DateTime, nullable=True)
     last_chapter_submitted = Column(SQLEnum(ChapterLabel), nullable=True)
+    supervisor_notes = Column(Text, nullable=True)
 
 class Submission(Base):
     __tablename__ = "submissions"

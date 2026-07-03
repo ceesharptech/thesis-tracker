@@ -4,6 +4,7 @@ export type PublishabilityStatus =
   | "publishable"
   | "not_publishable"
   | "needs_further_work"
+  | "disapproved"
   | null;
 
 export type ChapterLabel =
@@ -33,6 +34,7 @@ export interface Student {
   submissionCount: number;
   lastSubmissionAt: string | null;
   lastChapterSubmitted: ChapterLabel | null;
+  supervisorNotes: string | null;
 }
 
 export interface Submission {
