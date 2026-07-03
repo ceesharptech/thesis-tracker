@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { changePassword } from "@/lib/api/auth";
+import { getErrorMessage } from "@/lib/error";
 import { useAuthStore } from "@/store/authStore";
 import { Button } from "../../../@/components/ui/button";
 import { Input } from "../../../@/components/ui/input";
@@ -65,9 +66,9 @@ export default function ChangePasswordPage() {
       } else {
         navigate("/student/dashboard");
       }
-    } catch (err: any) {
+    } catch (err) {
       setError("currentPassword", {
-        message: err.message || "Failed to update password",
+        message: getErrorMessage(err) || "Failed to update password",
       });
     }
   };

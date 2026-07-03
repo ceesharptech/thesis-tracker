@@ -36,8 +36,6 @@ export default function SupervisorDashboard() {
       .then(([studentsData, statsData]) => {
         setStudents(studentsData as Student[]);
         setStats(statsData as DashboardStats | null);
-        console.log(stats);
-        console.log(students);
       })
       .finally(() => setIsLoading(false));
   }, []);

@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { login } from "@/lib/api/auth";
+import { getErrorMessage } from "@/lib/error";
 import { useAuthStore } from "@/store/authStore";
 import { Button } from "../../../@/components/ui/button";
 import { Input } from "../../../@/components/ui/input";
@@ -53,8 +54,8 @@ export default function LoginPage() {
       } else {
         navigate("/student/dashboard");
       }
-    } catch (err: any) {
-      setErrorMsg(err.message || "Incorrect credentials");
+    } catch (err) {
+      setErrorMsg(getErrorMessage(err) || "Incorrect credentials");
     }
   };
 

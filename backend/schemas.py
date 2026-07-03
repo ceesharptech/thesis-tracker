@@ -95,3 +95,6 @@ class SupervisorDashboardStats(BaseModel):
     total_submissions: int
     pending_reviews: int
     publishable_count: int
+
+class PublishabilityUpdate(BaseModel):
+    status: PublishabilityStatus

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
 import { toast } from "sonner";
 import { uploadStudentsExcel } from "@/lib/api/supervisor";
+import { getErrorMessage } from "@/lib/error";
 import { EXCEL_COLUMN_MAP } from "@/lib/constants";
 import PageWrapper from "@/components/layout/PageWrapper";
 import { Button } from "../../../@/components/ui/button";
@@ -123,11 +124,8 @@ export default function UploadStudentsPage() {
         // If everything succeeded, go back to dashboard
         navigate("/supervisor/dashboard");
       }
-    } catch (err: any) {
-      toast.error(
-        err.response?.data?.detail ||
-          "Failed to process Excel file on the server",
-      );
+    } catch (err) {
+      toast.error(getErrorMessage(err) || "Failed to process Excel file");
     } finally {
       setIsSubmitting(false);
     }

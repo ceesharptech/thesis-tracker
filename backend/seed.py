@@ -59,7 +59,7 @@ for s in students_data:
         user = User(
             name=s["name"],
             identifier=s["matric"],
-            hashed_password=hash_password("password123"),
+            hashed_password=hash_password("Caleb123"),
             role=UserRole.STUDENT,
             is_first_login=False,
         )
@@ -74,7 +74,7 @@ for s in students_data:
             department=s["dept"],
         )
         db.add(student)
-        print(f"Student created: {s['matric']} / password123  ({s['name']})")
+        print(f"Student created: {s['matric']} / Caleb123  ({s['name']})")
     else:
         print(f"Student {s['matric']} already exists")
 

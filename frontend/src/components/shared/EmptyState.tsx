@@ -2,7 +2,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import type { ReactNode } from "react";
 
 interface Props {
-  icon: any;
+  icon: React.ComponentProps<typeof HugeiconsIcon>["icon"];
   heading: string;
   sub: string;
   action?: ReactNode;

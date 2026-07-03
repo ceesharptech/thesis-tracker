@@ -6,6 +6,7 @@ import { useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ViewIcon, ViewOffSlashIcon } from "@hugeicons/core-free-icons";
 import { changePassword } from "@/lib/api/auth";
+import { getErrorMessage } from "@/lib/error";
 import { useAuthStore } from "@/store/authStore";
 import PageWrapper from "@/components/layout/PageWrapper";
 import { Button } from "../../../@/components/ui/button";
@@ -27,6 +28,8 @@ const passwordSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
+
+type PasswordForm = z.infer<typeof passwordSchema>;
 
 export default function SupervisorSettings() {
   const user = useAuthStore((s) => s.user);
@@ -65,14 +68,14 @@ export default function SupervisorSettings() {
     }
   };
 
-  const onUpdatePassword = async (data: any) => {
+  const onUpdatePassword = async (data: PasswordForm) => {
     try {
       await changePassword(data.currentPassword, data.newPassword);
       toast.success("Password changed successfully");
       resetPwd();
-    } catch (err: any) {
+    } catch (err) {
       setPwdError("currentPassword", {
-        message: err.message || "Failed to update password",
+        message: getErrorMessage(err) || "Failed to update password",
       });
     }
   };
