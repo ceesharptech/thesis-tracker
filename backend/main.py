@@ -51,6 +51,18 @@ def seed():
             db.add(sup)
             db.commit()
             print("✅ Seeded supervisor: supervisor / password123")
+
+        if not db.query(User).filter(User.identifier == "supervisor@university.edu").first():
+            sup_email = User(
+                name="Dr. Supervisor",
+                identifier="supervisor@university.edu",
+                hashed_password=hash_password("password123"),
+                role=UserRole.SUPERVISOR,
+                is_first_login=False,
+            )
+            db.add(sup_email)
+            db.commit()
+            print("✅ Seeded supervisor: supervisor@university.edu / password123")
     finally:
         db.close()
 
