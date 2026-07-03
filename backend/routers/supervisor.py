@@ -87,7 +87,7 @@ async def upload_students(
             user = User(
                 name=name,
                 identifier=matric,
-                hashed_password=hash_password("password123"),  # default
+                hashed_password=hash_password("Caleb123"),  # default
                 role=UserRole.STUDENT,
                 is_first_login=True,
             )

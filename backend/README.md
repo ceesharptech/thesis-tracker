@@ -85,7 +85,7 @@ To seed additional demo students, run:
 python seed.py
 ```
 
-This creates 5 test student accounts, all with the default password `password123`.
+This creates 5 test student accounts, all with the default password `Caleb123`.
 
 ## File Uploads
 
@@ -142,7 +142,7 @@ The `/supervisor/upload-students` endpoint accepts `.xlsx` or `.xls` files with 
 | Project Title | `project title`, `title`, `project` |
 | Department | `department`, `dept` |
 
-Imported students receive the default password `password123` and are flagged for first-login password change.
+Imported students receive the default password `Caleb123` and are flagged for first-login password change.
 
 ## Project Structure
 
