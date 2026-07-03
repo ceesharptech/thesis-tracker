@@ -39,6 +39,7 @@ class StudentListItem(BaseModel):
     submissionCount: int = Field(alias="submission_count")
     lastSubmissionAt: Optional[datetime] = Field(alias="last_submission_at")
     lastChapterSubmitted: Optional[ChapterLabel] = Field(alias="last_chapter_submitted")
+    supervisorNotes: Optional[str] = Field(alias="supervisor_notes")
 
     class Config:
         from_attributes = True
@@ -98,3 +99,6 @@ class SupervisorDashboardStats(BaseModel):
 
 class PublishabilityUpdate(BaseModel):
     status: PublishabilityStatus
+
+class SupervisorNotesUpdate(BaseModel):
+    notes: Optional[str]

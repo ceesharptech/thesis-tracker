@@ -12,6 +12,7 @@ export const PUBLISHABILITY_OPTIONS = [
   { value: "publishable", label: "Publishable" },
   { value: "not_publishable", label: "Not Publishable" },
   { value: "needs_further_work", label: "Needs Further Work" },
+  { value: "disapproved", label: "Disapproved" },
 ] as const;
 
 export const EXCEL_COLUMN_MAP = {
