@@ -117,10 +117,10 @@ export default function LoginPage() {
           </div>
 
           {/* Role Toggle Switch */}
-          <div className="relative flex bg-tf-gray-100 p-2 rounded-3xl mb-10 gap-2">
+          <div className="relative flex bg-tf-gray-100 p-2 rounded-2xl mb-10 gap-2">
             <div
               className={cn(
-                "absolute top-2 bottom-2 w-[calc(50%-8px)] rounded-2xl bg-white shadow-sm transition-all duration-300 ease-out",
+                "absolute top-2 bottom-2 w-[calc(50%-8px)] rounded-xl bg-white shadow-sm transition-all duration-300 ease-out",
                 loginRole === "student" ? "left-2" : "left-[calc(50%)]",
               )}
             />
@@ -132,7 +132,7 @@ export default function LoginPage() {
                 setErrorMsg(null);
               }}
               className={cn(
-                "relative z-10 flex-1 text-sm font-medium py-3 px-4 rounded-2xl transition-colors duration-200 hover:cursor-pointer",
+                "relative z-10 flex-1 text-sm font-medium py-3 px-4 rounded-xl transition-colors duration-200 hover:cursor-pointer",
                 loginRole === "student"
                   ? "text-tf-black"
                   : "text-tf-gray-500 hover:text-tf-gray-900",
@@ -148,7 +148,7 @@ export default function LoginPage() {
                 setErrorMsg(null);
               }}
               className={cn(
-                "relative z-10 flex-1 text-sm font-medium py-3 px-4 rounded-2xl transition-colors duration-200 hover:cursor-pointer",
+                "relative z-10 flex-1 text-sm font-medium py-3 px-4 rounded-xl transition-colors duration-200 hover:cursor-pointer",
                 loginRole === "supervisor"
                   ? "text-tf-black"
                   : "text-tf-gray-500 hover:text-tf-gray-900",

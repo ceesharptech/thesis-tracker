@@ -11,7 +11,6 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import {
   FileUploadIcon,
   Alert01Icon,
-  File01Icon,
   InformationCircleIcon,
   CheckmarkCircle01Icon,
 } from "@hugeicons/core-free-icons";
@@ -288,8 +287,8 @@ export default function UploadStudentsPage() {
               </div>
             </div>
 
-            <div className="w-full overflow-x-auto bg-white rounded-xl border border-tf-red-100 shadow-sm max-h-[500px] overflow-y-auto">
-              <table className="w-full text-left border-collapse min-w-[700px]">
+            <div className="w-full overflow-x-auto bg-white rounded-xl border border-tf-red-100 shadow-sm max-h-125 overflow-y-auto">
+              <table className="w-full text-left border-collapse min-w-175">
                 <thead className="sticky top-0 bg-tf-red-50 z-10 shadow-sm">
                   <tr className="text-xs font-medium text-tf-red-700 uppercase tracking-wide h-10 border-b border-tf-red-100">
                     <th className="px-4">Name</th>
