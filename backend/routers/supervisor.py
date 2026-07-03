@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
 from models import Student, User, UserRole, Submission, PublishabilityStatus, Comment
-from schemas import StudentListItem, SupervisorDashboardStats, BulkImportResponse, StudentImportRow
-from dependencies import require_supervisor
+from schemas import StudentListItem, SupervisorDashboardStats, BulkImportResponse, StudentImportRow, SubmissionOut, CommentOut, CommentCreate, PublishabilityUpdate
+from dependencies import require_supervisor, get_current_user
 from auth import hash_password
 import openpyxl
 from typing import List
@@ -120,3 +120,55 @@ def get_student_detail(student_id: str, db: Session = Depends(get_db)):
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
     return student
+
+@router.get("/student/{student_id}/submissions", response_model=list[SubmissionOut])
+def get_student_submissions(student_id: str, db: Session = Depends(get_db)):
+    student = db.query(Student).filter(Student.id == student_id).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+    submissions = db.query(Submission).filter(Submission.student_id == student_id).all()
+    for s in submissions:
+        s.commentCount = db.query(Comment).filter(Comment.submission_id == s.id).count()
+    return submissions
+
+@router.put("/student/{student_id}/publishability", response_model=StudentListItem)
+def update_publishability(
+    student_id: str,
+    req: PublishabilityUpdate,
+    db: Session = Depends(get_db),
+):
+    student = db.query(Student).filter(Student.id == student_id).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+    student.publishability_status = req.status
+    db.commit()
+    db.refresh(student)
+    return student
+
+@router.get("/submissions/{submission_id}/comments", response_model=list[CommentOut])
+def get_submission_comments(submission_id: str, db: Session = Depends(get_db)):
+    submission = db.query(Submission).filter(Submission.id == submission_id).first()
+    if not submission:
+        raise HTTPException(status_code=404, detail="Submission not found")
+    comments = db.query(Comment).filter(Comment.submission_id == submission_id).order_by(Comment.created_at.asc()).all()
+    return comments
+
+@router.post("/submissions/{submission_id}/comments", response_model=CommentOut)
+def add_submission_comment(
+    submission_id: str,
+    req: CommentCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    submission = db.query(Submission).filter(Submission.id == submission_id).first()
+    if not submission:
+        raise HTTPException(status_code=404, detail="Submission not found")
+    comment = Comment(
+        submission_id=submission_id,
+        author_name=req.author_name or current_user.name,
+        body=req.body,
+    )
+    db.add(comment)
+    db.commit()
+    db.refresh(comment)
+    return comment

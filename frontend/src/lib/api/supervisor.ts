@@ -7,11 +7,29 @@ import type {
   PublishabilityStatus,
 } from "@/types";
 
+type RawStudent = {
+  id: string;
+  name: string;
+  matric_number?: string;
+  matricNumber?: string;
+  project_title?: string;
+  projectTitle?: string;
+  department: string;
+  publishability_status?: PublishabilityStatus;
+  publishabilityStatus?: PublishabilityStatus;
+  submission_count?: number;
+  submissionCount?: number;
+  last_submission_at?: string | null;
+  lastSubmissionAt?: string | null;
+  last_chapter_submitted?: string | null;
+  lastChapterSubmitted?: string | null;
+};
+
 export const getStudents = async () => {
   const res = await client.get("/supervisor/students");
 
   // Map FastAPI's snake_case to frontend's camelCase
-  return res.data.map((student: any) => ({
+  return res.data.map((student: RawStudent) => ({
     id: student.id,
     name: student.name,
     matricNumber: student.matric_number ?? student.matricNumber,
@@ -62,19 +80,40 @@ export const getStudentDetail = async (studentId: string) => {
   } as Student;
 };
 
-// ... keep your Phase 4 stubs below
 export const getStudentSubmissions = async (studentId: string) => {
-  return [] as Submission[];
+  const res = await client.get(`/supervisor/student/${studentId}/submissions`);
+  return res.data as Submission[];
 };
+
 export const updatePublishabilityStatus = async (
   studentId: string,
   status: PublishabilityStatus,
 ) => {
-  return { success: true };
+  const res = await client.put(`/supervisor/student/${studentId}/publishability`, {
+    status,
+  });
+  return {
+    ...res.data,
+    matricNumber: res.data.matric_number ?? res.data.matricNumber,
+    projectTitle: res.data.project_title ?? res.data.projectTitle,
+    publishabilityStatus:
+      res.data.publishability_status ?? res.data.publishabilityStatus,
+    submissionCount: res.data.submission_count ?? res.data.submissionCount,
+    lastSubmissionAt: res.data.last_submission_at ?? res.data.lastSubmissionAt,
+    lastChapterSubmitted:
+      res.data.last_chapter_submitted ?? res.data.lastChapterSubmitted,
+  } as Student;
 };
+
 export const getComments = async (submissionId: string) => {
-  return [] as Comment[];
+  const res = await client.get(`/supervisor/submissions/${submissionId}/comments`);
+  return res.data as Comment[];
 };
+
 export const addComment = async (submissionId: string, body: string) => {
-  return {} as Comment;
+  const res = await client.post(`/supervisor/submissions/${submissionId}/comments`, {
+    author_name: "Supervisor",
+    body,
+  });
+  return res.data as Comment;
 };

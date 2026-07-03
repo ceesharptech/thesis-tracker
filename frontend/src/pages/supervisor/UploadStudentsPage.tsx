@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { uploadStudentsExcel } from "@/lib/api/supervisor";
+import { getErrorMessage } from "@/lib/error";
 import PageWrapper from "@/components/layout/PageWrapper";
 import { Button } from "../../../@/components/ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -59,8 +60,8 @@ export default function UploadStudentsPage() {
         // If everything succeeded, go back to dashboard
         navigate("/supervisor/dashboard");
       }
-    } catch (err: any) {
-      toast.error(err.response?.data?.detail || "Failed to process Excel file");
+    } catch (err) {
+      toast.error(getErrorMessage(err) || "Failed to process Excel file");
     } finally {
       setIsSubmitting(false);
     }
