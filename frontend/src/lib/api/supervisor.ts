@@ -5,7 +5,41 @@ import type {
   Submission,
   Comment,
   PublishabilityStatus,
+  ChapterLabel,
 } from "@/types";
+
+type RawSubmission = {
+  id: string;
+  student_id?: string;
+  studentId?: string;
+  chapter_label?: string;
+  chapterLabel?: ChapterLabel;
+  file_url?: string;
+  fileUrl?: string;
+  file_name?: string;
+  fileName?: string;
+  file_type?: string;
+  fileType?: "pdf" | "docx";
+  file_size_bytes?: number;
+  fileSizeBytes?: number;
+  student_note?: string | null;
+  studentNote?: string | null;
+  uploaded_at?: string;
+  uploadedAt?: string;
+  comment_count?: number;
+  commentCount?: number;
+};
+
+type RawComment = {
+  id: string;
+  submission_id?: string;
+  submissionId?: string;
+  author_name?: string;
+  authorName?: string;
+  body: string;
+  created_at?: string;
+  createdAt?: string;
+};
 
 type RawStudent = {
   id: string;
@@ -82,7 +116,18 @@ export const getStudentDetail = async (studentId: string) => {
 
 export const getStudentSubmissions = async (studentId: string) => {
   const res = await client.get(`/supervisor/student/${studentId}/submissions`);
-  return res.data as Submission[];
+  return res.data.map((sub: RawSubmission) => ({
+    id: sub.id,
+    studentId: sub.student_id ?? sub.studentId,
+    chapterLabel: (sub.chapter_label ?? sub.chapterLabel) as ChapterLabel,
+    fileUrl: sub.file_url ?? sub.fileUrl,
+    fileName: sub.file_name ?? sub.fileName,
+    fileType: (sub.file_type ?? sub.fileType) as "pdf" | "docx",
+    fileSizeBytes: sub.file_size_bytes ?? sub.fileSizeBytes,
+    studentNote: sub.student_note ?? sub.studentNote,
+    uploadedAt: sub.uploaded_at ?? sub.uploadedAt,
+    commentCount: sub.comment_count ?? sub.commentCount ?? 0,
+  })) as Submission[];
 };
 
 export const updatePublishabilityStatus = async (
@@ -107,7 +152,13 @@ export const updatePublishabilityStatus = async (
 
 export const getComments = async (submissionId: string) => {
   const res = await client.get(`/supervisor/submissions/${submissionId}/comments`);
-  return res.data as Comment[];
+  return res.data.map((comment: RawComment) => ({
+    id: comment.id,
+    submissionId: comment.submission_id ?? comment.submissionId,
+    authorName: comment.author_name ?? comment.authorName,
+    body: comment.body,
+    createdAt: comment.created_at ?? comment.createdAt,
+  })) as Comment[];
 };
 
 export const addComment = async (submissionId: string, body: string) => {
@@ -115,5 +166,11 @@ export const addComment = async (submissionId: string, body: string) => {
     author_name: "Supervisor",
     body,
   });
-  return res.data as Comment;
+  return {
+    id: res.data.id,
+    submissionId: res.data.submission_id ?? res.data.submissionId,
+    authorName: res.data.author_name ?? res.data.authorName,
+    body: res.data.body,
+    createdAt: res.data.created_at ?? res.data.createdAt,
+  } as Comment;
 };
