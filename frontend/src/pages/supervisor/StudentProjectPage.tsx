@@ -42,6 +42,7 @@ export default function StudentProjectPage() {
   const [loading, setLoading] = useState(true);
   const [commentDraft, setCommentDraft] = useState<Record<string, string>>({});
   const [notes, setNotes] = useState("");
+  const [loadedNotes, setLoadedNotes] = useState("");
   const [savingNotes, setSavingNotes] = useState(false);
 
   useEffect(() => {
@@ -52,7 +53,7 @@ export default function StudentProjectPage() {
         submissionsData = subsData;
         setStudent(studentData);
         setSubmissions(subsData);
-        setNotes(studentData.supervisorNotes || "");
+        setLoadedNotes(studentData.supervisorNotes || "");
         return Promise.all(subsData.map((sub) => getComments(sub.id)));
       })
       .then((commentsData) => {
@@ -85,6 +86,7 @@ export default function StudentProjectPage() {
     try {
       const updated = await updateStudentNotes(id, notes);
       setStudent(updated);
+      setNotes("");
       toast.success("Notes saved");
     } catch (err) {
       toast.error(getErrorMessage(err) || "Failed to save notes");
@@ -142,22 +144,27 @@ export default function StudentProjectPage() {
           </div>
 
           {/* Status action buttons */}
-          <div className="flex flex-wrap items-center gap-2">
-            {STATUS_BUTTONS.map((btn) => (
-              <Button
-                key={btn.value}
-                type="button"
-                variant={
-                  student.publishabilityStatus === btn.value
-                    ? btn.variant
-                    : "outline"
-                }
-                onClick={() => handleStatusChange(btn.value)}
-                className="rounded-xl h-10 px-4 text-sm border-tf-gray-200"
-              >
-                {btn.label}
-              </Button>
-            ))}
+          <div className="flex flex-col items-start md:items-end gap-2">
+            <span className="font-medium text-sm text-tf-gray-500">
+              Publishability Status
+            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              {STATUS_BUTTONS.map((btn) => (
+                <Button
+                  key={btn.value}
+                  type="button"
+                  variant={
+                    student.publishabilityStatus === btn.value
+                      ? btn.variant
+                      : "outline"
+                  }
+                  onClick={() => handleStatusChange(btn.value)}
+                  className="rounded-xl h-10 px-4 text-sm border-tf-gray-200 hover:cursor-pointer"
+                >
+                  {btn.label}
+                </Button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -167,6 +174,19 @@ export default function StudentProjectPage() {
           </h2>
           <p className="text-base text-tf-black mt-1">{student.projectTitle}</p>
         </div>
+      </div>
+
+      <div className="bg-white rounded-xl border border-tf-gray-100 p-6">
+        <h2 className="text-lg font-medium text-tf-black mb-2">Notes</h2>
+        {!loadedNotes ? (
+          <span className="text-sm font-normal text-tf-gray-400">
+            No notes added.
+          </span>
+        ) : (
+          <span className="text-sm font-normal text-tf-gray-900">
+            {student.supervisorNotes}
+          </span>
+        )}
       </div>
 
       {/* Supervisor Notes */}
@@ -187,7 +207,7 @@ export default function StudentProjectPage() {
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Add general feedback about this student's project..."
-          className="w-full min-h-30 rounded-xl border border-tf-gray-200 p-3 text-sm text-tf-black placeholder:text-tf-gray-400 focus:outline-none focus:ring-2 focus:ring-tf-blue-700 focus:ring-offset-1 resize-y"
+          className="w-full min-h-30 rounded-xl border border-tf-gray-200 p-3 text-sm text-tf-black placeholder:text-tf-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:ring-offset-1 resize-y transition-all duration-200"
         />
       </div>
 

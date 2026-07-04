@@ -106,7 +106,7 @@ export default function ChangePasswordPage() {
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-tf-gray-400 hover:text-tf-gray-900 transition-colors"
               >
                 <HugeiconsIcon
-                  icon={showCurrentPassword ? ViewOffSlashIcon : ViewIcon}
+                  icon={showCurrentPassword ? ViewIcon : ViewOffSlashIcon}
                   size={20}
                 />
               </button>
@@ -138,7 +138,7 @@ export default function ChangePasswordPage() {
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-tf-gray-400 hover:text-tf-gray-900 transition-colors"
               >
                 <HugeiconsIcon
-                  icon={showNewPassword ? ViewOffSlashIcon : ViewIcon}
+                  icon={showNewPassword ? ViewIcon : ViewOffSlashIcon}
                   size={20}
                 />
               </button>
@@ -170,7 +170,7 @@ export default function ChangePasswordPage() {
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-tf-gray-400 hover:text-tf-gray-900 transition-colors"
               >
                 <HugeiconsIcon
-                  icon={showConfirmPassword ? ViewOffSlashIcon : ViewIcon}
+                  icon={showConfirmPassword ? ViewIcon : ViewOffSlashIcon}
                   size={20}
                 />
               </button>

@@ -9,6 +9,8 @@ import FileTypeBadge from "@/components/shared/FileTypeBadge";
 import { Button } from "../../../@/components/ui/button";
 import { formatDistanceToNow } from "date-fns";
 import type { Submission, Comment } from "@/types";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Download01Icon } from "@hugeicons/core-free-icons";
 
 export default function SubmissionDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -24,7 +26,9 @@ export default function SubmissionDetailPage() {
         setSubmission(subData);
         setComments(commentsData);
       })
-      .catch((err) => toast.error(getErrorMessage(err) || "Failed to load submission"))
+      .catch((err) =>
+        toast.error(getErrorMessage(err) || "Failed to load submission"),
+      )
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -39,7 +43,9 @@ export default function SubmissionDetailPage() {
   if (!submission) {
     return (
       <PageWrapper>
-        <div className="text-center py-16 text-tf-gray-500">Submission not found.</div>
+        <div className="text-center py-16 text-tf-gray-500">
+          Submission not found.
+        </div>
       </PageWrapper>
     );
   }
@@ -64,19 +70,25 @@ export default function SubmissionDetailPage() {
             href={`${import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"}${submission.fileUrl}`}
             target="_blank"
             rel="noreferrer"
-            className="text-sm text-tf-blue-700 hover:underline"
+            className="text-sm text-tf-blue-700 hover:underline flex gap-2"
           >
+            <HugeiconsIcon icon={Download01Icon} size={18} />
             Download {submission.fileName}
           </a>
         </div>
 
         <p className="text-sm text-tf-gray-500 mt-4">
-          Submitted {formatDistanceToNow(new Date(submission.uploadedAt), { addSuffix: true })}
+          Submitted{" "}
+          {formatDistanceToNow(new Date(submission.uploadedAt), {
+            addSuffix: true,
+          })}
         </p>
 
         {submission.studentNote && (
           <div className="mt-4">
-            <h3 className="text-sm font-medium text-tf-gray-700 mb-1">Your Note</h3>
+            <h3 className="text-sm font-medium text-tf-gray-700 mb-1">
+              Your Note
+            </h3>
             <p className="text-sm text-tf-gray-600">{submission.studentNote}</p>
           </div>
         )}
@@ -97,7 +109,9 @@ export default function SubmissionDetailPage() {
                     {comment.authorName}
                   </span>
                   <span className="text-xs text-tf-gray-400">
-                    {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
+                    {formatDistanceToNow(new Date(comment.createdAt), {
+                      addSuffix: true,
+                    })}
                   </span>
                 </div>
                 <p className="text-sm text-tf-gray-700">{comment.body}</p>

@@ -7,7 +7,7 @@
 
 @theme {
   --font-sans: "DM Sans", sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-mono: "Roboto Mono", monospace;
   --font-serif: "Instrument Serif", serif;
 
   /* --color-border: var(--border); */
@@ -35,6 +35,15 @@
   --color-tf-red-50: #fcebeb;
   --color-popover: oklch(1 0 0);
   --color-popover-foreground: oklch(0.145 0 0);
+  --color-primary: oklch(0.205 0 0);
+  --color-primary-foreground: oklch(0.985 0 0);
+  --color-secondary: oklch(0.97 0 0);
+  --color-secondary-foreground: oklch(0.205 0 0);
+  --color-muted: oklch(0.97 0 0);
+  --color-muted-foreground: oklch(0.556 0 0);
+  --color-accent: oklch(0.97 0 0);
+  --color-accent-foreground: oklch(0.205 0 0);
+  --color-destructive: oklch(0.577 0.245 27.325);
 }
 
 @layer base {
