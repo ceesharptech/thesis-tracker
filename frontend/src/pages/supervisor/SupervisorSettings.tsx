@@ -105,7 +105,7 @@ export default function SupervisorSettings() {
               <Input
                 {...registerName("name")}
                 className={cn(
-                  "h-12 rounded-xl text-sm",
+                  "h-12 rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
                   nameErrors.name && "border-tf-red-700",
                 )}
               />
@@ -151,7 +151,7 @@ export default function SupervisorSettings() {
                   type={showCurrent ? "text" : "password"}
                   {...registerPwd("currentPassword")}
                   className={cn(
-                    "h-12 w-full rounded-xl text-sm pr-12",
+                    "h-12 border-tf-gray-200 bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200h-12 w-full rounded-xl text-sm pr-12",
                     pwdErrors.currentPassword && "border-tf-red-700",
                   )}
                 />
@@ -182,7 +182,7 @@ export default function SupervisorSettings() {
                   type={showNew ? "text" : "password"}
                   {...registerPwd("newPassword")}
                   className={cn(
-                    "h-12 w-full rounded-xl text-sm pr-12",
+                    "h-12 rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200  w-full pr-12",
                     pwdErrors.newPassword && "border-tf-red-700",
                   )}
                 />
@@ -212,7 +212,7 @@ export default function SupervisorSettings() {
                 type="password"
                 {...registerPwd("confirmPassword")}
                 className={cn(
-                  "h-12 rounded-xl text-sm",
+                  "h-12 rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
                   pwdErrors.confirmPassword && "border-tf-red-700",
                 )}
               />

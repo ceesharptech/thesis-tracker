@@ -13,7 +13,7 @@ export default function StudentTable({ students }: Props) {
 
   return (
     <div className="w-full overflow-x-auto bg-white rounded-xl border border-tf-gray-100 shadow-sm">
-      <table className="w-full text-left border-collapse min-w-[800px]">
+      <table className="w-full text-left border-collapse min-w-200">
         <thead>
           <tr className="bg-tf-gray-50 text-xs font-medium text-tf-gray-500 uppercase tracking-wide h-12 border-b border-tf-gray-100">
             <th className="px-5 font-medium">Student</th>

@@ -53,7 +53,7 @@ export default function Sidebar({ role }: Props) {
     <aside
       className="fixed z-50 bg-tf-gray-50 border-gray-200 transition-all 
       md:w-55 md:left-0 md:top-0 md:bottom-0 md:flex md:flex-col md:border-r md:px-2
-      bottom-0 left-0 right-0 flex flex-row border-t h-[72px] md:h-auto"
+      bottom-0 left-0 right-0 flex flex-row border-t h-18 md:h-auto"
     >
       {/* Desktop Top Logo */}
       <div className="hidden md:flex p-5 items-center gap-2 mb-4 mt-2">
