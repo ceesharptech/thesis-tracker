@@ -101,6 +101,32 @@ export const uploadStudentsExcel = async (file: File) => {
   return res.data as { imported: number; failed: StudentImportRow[] };
 };
 
+export const createStudent = async (data: {
+  name: string;
+  matricNumber: string;
+  projectTitle: string;
+  department: string;
+}) => {
+  const res = await client.post("/supervisor/student", {
+    name: data.name,
+    matric_number: data.matricNumber,
+    project_title: data.projectTitle,
+    department: data.department,
+  });
+  return {
+    ...res.data,
+    matricNumber: res.data.matric_number ?? res.data.matricNumber,
+    projectTitle: res.data.project_title ?? res.data.projectTitle,
+    publishabilityStatus:
+      res.data.publishability_status ?? res.data.publishabilityStatus,
+    submissionCount: res.data.submission_count ?? res.data.submissionCount,
+    lastSubmissionAt: res.data.last_submission_at ?? res.data.lastSubmissionAt,
+    lastChapterSubmitted:
+      res.data.last_chapter_submitted ?? res.data.lastChapterSubmitted,
+    supervisorNotes: res.data.supervisor_notes ?? res.data.supervisorNotes,
+  } as Student;
+};
+
 export const getStudentDetail = async (studentId: string) => {
   const res = await client.get(`/supervisor/student/${studentId}`);
   // We will need to map this one to camelCase too when we get to Phase 4

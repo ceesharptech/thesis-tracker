@@ -102,3 +102,9 @@ class PublishabilityUpdate(BaseModel):
 
 class SupervisorNotesUpdate(BaseModel):
     notes: Optional[str]
+
+class StudentCreate(BaseModel):
+    name: str
+    matric_number: str
+    project_title: str
+    department: str

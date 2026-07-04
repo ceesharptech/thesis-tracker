@@ -2,7 +2,18 @@ from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
 from models import Student, User, UserRole, Submission, PublishabilityStatus, Comment
-from schemas import StudentListItem, SupervisorDashboardStats, BulkImportResponse, StudentImportRow, SubmissionOut, CommentOut, CommentCreate, PublishabilityUpdate, SupervisorNotesUpdate
+from schemas import (
+    StudentListItem,
+    SupervisorDashboardStats,
+    BulkImportResponse,
+    StudentImportRow,
+    SubmissionOut,
+    CommentOut,
+    CommentCreate,
+    PublishabilityUpdate,
+    SupervisorNotesUpdate,
+    StudentCreate,
+)
 from dependencies import require_supervisor, get_current_user
 from auth import hash_password
 import openpyxl
@@ -14,6 +25,38 @@ router = APIRouter(prefix="/supervisor", tags=["Supervisor"], dependencies=[Depe
 def list_students(db: Session = Depends(get_db)):
     students = db.query(Student).all()
     return students
+
+@router.post("/student", response_model=StudentListItem)
+def create_student(req: StudentCreate, db: Session = Depends(get_db)):
+    # Validate required fields
+    if not all([req.name, req.matric_number, req.project_title, req.department]):
+        raise HTTPException(status_code=400, detail="All fields are required")
+
+    # Check duplicate matric
+    if db.query(Student).filter(Student.matric_number == req.matric_number).first():
+        raise HTTPException(status_code=400, detail="Matric number already exists")
+
+    user = User(
+        name=req.name,
+        identifier=req.matric_number,
+        hashed_password=hash_password("Caleb123"),
+        role=UserRole.STUDENT,
+        is_first_login=True,
+    )
+    db.add(user)
+    db.flush()
+
+    student = Student(
+        user_id=user.id,
+        name=req.name,
+        matric_number=req.matric_number,
+        project_title=req.project_title,
+        department=req.department,
+    )
+    db.add(student)
+    db.commit()
+    db.refresh(student)
+    return student
 
 @router.get("/dashboard", response_model=SupervisorDashboardStats)
 def dashboard_stats(db: Session = Depends(get_db)):

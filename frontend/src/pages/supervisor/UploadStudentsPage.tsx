@@ -1,30 +1,45 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { uploadStudentsExcel } from "@/lib/api/supervisor";
+import { uploadStudentsExcel, createStudent } from "@/lib/api/supervisor";
 import { getErrorMessage } from "@/lib/error";
 import PageWrapper from "@/components/layout/PageWrapper";
 import { Button } from "../../../@/components/ui/button";
+import { Input } from "../../../@/components/ui/input";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   FileUploadIcon,
   Alert01Icon,
   File01Icon,
+  UserAdd01Icon,
 } from "@hugeicons/core-free-icons";
 import { cn } from "../../../@/lib/utils";
 import type { StudentImportRow } from "@/types";
+
+type SingleStudentForm = {
+  name: string;
+  matricNumber: string;
+  projectTitle: string;
+  department: string;
+};
 
 export default function UploadStudentsPage() {
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [failedRows, setFailedRows] = useState<StudentImportRow[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [singleStudent, setSingleStudent] = useState<SingleStudentForm>({
+    name: "",
+    matricNumber: "",
+    projectTitle: "",
+    department: "",
+  });
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Verify it's an excel file (basic check)
     const validTypes = [
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       "application/vnd.ms-excel",
@@ -39,13 +54,13 @@ export default function UploadStudentsPage() {
     }
 
     setSelectedFile(file);
-    setFailedRows([]); // Reset any previous errors
+    setFailedRows([]);
   };
 
-  const handleSubmit = async () => {
+  const handleUpload = async () => {
     if (!selectedFile) return;
 
-    setIsSubmitting(true);
+    setIsUploading(true);
     try {
       const res = await uploadStudentsExcel(selectedFile);
 
@@ -57,57 +72,169 @@ export default function UploadStudentsPage() {
         setFailedRows(res.failed);
         toast.error(`${res.failed.length} rows failed validation`);
       } else {
-        // If everything succeeded, go back to dashboard
         navigate("/supervisor/dashboard");
       }
     } catch (err) {
       toast.error(getErrorMessage(err) || "Failed to process Excel file");
     } finally {
-      setIsSubmitting(false);
+      setIsUploading(false);
+    }
+  };
+
+  const handleCreateSingle = async () => {
+    if (
+      !singleStudent.name ||
+      !singleStudent.matricNumber ||
+      !singleStudent.projectTitle ||
+      !singleStudent.department
+    ) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    setIsCreating(true);
+    try {
+      await createStudent(singleStudent);
+      toast.success("Student account created successfully");
+      navigate("/supervisor/dashboard");
+    } catch (err) {
+      toast.error(getErrorMessage(err) || "Failed to create student");
+    } finally {
+      setIsCreating(false);
     }
   };
 
   return (
     <PageWrapper>
-      <div className="max-w-4xl mx-auto space-y-8">
-        {/* Dropzone area */}
-        <div className="relative border-2 border-dashed border-tf-gray-200 rounded-xl bg-white p-10 flex flex-col items-center justify-center text-center hover:bg-tf-gray-50 transition-colors">
-          <input
-            type="file"
-            accept=".xlsx, .xls"
-            onChange={handleFileSelect}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-          />
-          <div className="text-tf-gray-400 mb-4 bg-tf-gray-50 p-4 rounded-full">
-            <HugeiconsIcon
-              icon={selectedFile ? File01Icon : FileUploadIcon}
-              size={32}
-            />
+      <div className="max-w-4xl mx-auto space-y-10">
+        {/* Single Student Form */}
+        <div className="bg-white rounded-xl border border-tf-gray-100 p-6 md:p-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-tf-gray-50 rounded-lg text-tf-gray-700">
+              <HugeiconsIcon icon={UserAdd01Icon} size={20} />
+            </div>
+            <div>
+              <h2 className="text-lg font-medium text-tf-black">Add Single Student</h2>
+              <p className="text-sm text-tf-gray-500">
+                Create one student account manually.
+              </p>
+            </div>
           </div>
-          <h3 className="text-base font-medium text-tf-black mb-1">
-            {selectedFile ? selectedFile.name : "Click or drag Excel file here"}
-          </h3>
-          <p className="text-sm text-tf-gray-500">
-            {selectedFile
-              ? `${(selectedFile.size / 1024).toFixed(1)} KB`
-              : "Must contain columns for Name, Matric Number, and Project Title."}
-          </p>
-        </div>
 
-        {/* Action Button */}
-        {selectedFile && failedRows.length === 0 && (
-          <div className="flex justify-end animate-in fade-in duration-300">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="block text-xs font-medium text-tf-gray-500">Full Name</label>
+              <Input
+                value={singleStudent.name}
+                onChange={(e) =>
+                  setSingleStudent((prev) => ({ ...prev, name: e.target.value }))
+                }
+                placeholder="e.g. Amara Okafor"
+                className="h-12 rounded-xl"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="block text-xs font-medium text-tf-gray-500">Matric Number</label>
+              <Input
+                value={singleStudent.matricNumber}
+                onChange={(e) =>
+                  setSingleStudent((prev) => ({ ...prev, matricNumber: e.target.value }))
+                }
+                placeholder="e.g. 22/11450"
+                className="h-12 rounded-xl"
+              />
+            </div>
+            <div className="space-y-1.5 md:col-span-2">
+              <label className="block text-xs font-medium text-tf-gray-500">Project Title</label>
+              <Input
+                value={singleStudent.projectTitle}
+                onChange={(e) =>
+                  setSingleStudent((prev) => ({ ...prev, projectTitle: e.target.value }))
+                }
+                placeholder="e.g. AI-Powered Crop Disease Detection"
+                className="h-12 rounded-xl"
+              />
+            </div>
+            <div className="space-y-1.5 md:col-span-2">
+              <label className="block text-xs font-medium text-tf-gray-500">Department</label>
+              <Input
+                value={singleStudent.department}
+                onChange={(e) =>
+                  setSingleStudent((prev) => ({ ...prev, department: e.target.value }))
+                }
+                placeholder="e.g. Computer Science"
+                className="h-12 rounded-xl"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end mt-6">
             <Button
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-              className="bg-tf-black text-white hover:bg-tf-gray-900 rounded-xl px-6 h-12 w-full md:w-auto"
+              onClick={handleCreateSingle}
+              disabled={isCreating}
+              className="bg-tf-black text-white hover:bg-tf-gray-900 rounded-xl h-12 px-6"
             >
-              {isSubmitting
-                ? "Uploading & Processing..."
-                : "Upload and Create Accounts"}
+              {isCreating ? "Creating..." : "Create Account"}
             </Button>
           </div>
-        )}
+        </div>
+
+        {/* Divider */}
+        <div className="relative flex items-center">
+          <div className="flex-1 border-t border-tf-gray-200" />
+          <span className="px-4 text-sm text-tf-gray-400">or upload in bulk</span>
+          <div className="flex-1 border-t border-tf-gray-200" />
+        </div>
+
+        {/* Excel Upload */}
+        <div className="bg-white rounded-xl border border-tf-gray-100 p-6 md:p-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-tf-gray-50 rounded-lg text-tf-gray-700">
+              <HugeiconsIcon icon={FileUploadIcon} size={20} />
+            </div>
+            <div>
+              <h2 className="text-lg font-medium text-tf-black">Bulk Upload</h2>
+              <p className="text-sm text-tf-gray-500">
+                Upload an Excel file with columns: Name, Matric Number, Project Title, Department.
+              </p>
+            </div>
+          </div>
+
+          <div className="relative border-2 border-dashed border-tf-gray-200 rounded-xl bg-white p-10 flex flex-col items-center justify-center text-center hover:bg-tf-gray-50 transition-colors">
+            <input
+              type="file"
+              accept=".xlsx, .xls"
+              onChange={handleFileSelect}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            />
+            <div className="text-tf-gray-400 mb-4 bg-tf-gray-50 p-4 rounded-full">
+              <HugeiconsIcon
+                icon={selectedFile ? File01Icon : FileUploadIcon}
+                size={32}
+              />
+            </div>
+            <h3 className="text-base font-medium text-tf-black mb-1">
+              {selectedFile ? selectedFile.name : "Click or drag Excel file here"}
+            </h3>
+            <p className="text-sm text-tf-gray-500">
+              {selectedFile
+                ? `${(selectedFile.size / 1024).toFixed(1)} KB`
+                : "Must contain columns for Name, Matric Number, Project Title, Department."}
+            </p>
+          </div>
+
+          {selectedFile && failedRows.length === 0 && (
+            <div className="flex justify-end mt-6">
+              <Button
+                onClick={handleUpload}
+                disabled={isUploading}
+                className="bg-tf-black text-white hover:bg-tf-gray-900 rounded-xl h-12 px-6"
+              >
+                {isUploading ? "Uploading & Processing..." : "Upload and Create Accounts"}
+              </Button>
+            </div>
+          )}
+        </div>
 
         {/* Failed Rows Preview Table */}
         {failedRows.length > 0 && (
@@ -119,8 +246,7 @@ export default function UploadStudentsPage() {
                   Failed Rows ({failedRows.length})
                 </h3>
                 <p className="text-sm text-tf-gray-500 mt-1">
-                  These rows were skipped. Fix them in your Excel file and
-                  upload again.
+                  These rows were skipped. Fix them in your Excel file and upload again.
                 </p>
               </div>
             </div>
