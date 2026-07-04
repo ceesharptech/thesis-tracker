@@ -39,7 +39,10 @@ export default function StudentDashboard() {
     setLoading(true);
     try {
       const data = await getMySubmissions();
-      setSubmissions(data);
+      const sortedData = [...data].sort(
+        (a, b) => Date.parse(b.uploadedAt) - Date.parse(a.uploadedAt),
+      );
+      setSubmissions(sortedData);
     } catch (err) {
       toast.error(getErrorMessage(err) || "Failed to load submissions");
     } finally {
@@ -49,7 +52,13 @@ export default function StudentDashboard() {
 
   useEffect(() => {
     getMySubmissions()
-      .then((data) => setSubmissions(data))
+      .then((data) => {
+        const sortedData = [...data].sort(
+          (a, b) => Date.parse(b.uploadedAt) - Date.parse(a.uploadedAt),
+        );
+        setSubmissions(sortedData);
+        console.log(data);
+      })
       .catch((err) =>
         toast.error(getErrorMessage(err) || "Failed to load submissions"),
       )
