@@ -79,9 +79,16 @@ export default function SubmissionDetailPage() {
 
         <p className="text-sm text-tf-gray-500 mt-4">
           Submitted{" "}
-          {formatDistanceToNow(new Date(submission.uploadedAt), {
-            addSuffix: true,
-          })}
+          {formatDistanceToNow(
+            new Date(
+              submission.uploadedAt.endsWith("Z")
+                ? submission.uploadedAt
+                : `${submission.uploadedAt}Z`,
+            ),
+            {
+              addSuffix: true,
+            },
+          )}
         </p>
 
         {submission.studentNote && (
@@ -109,9 +116,16 @@ export default function SubmissionDetailPage() {
                     {comment.authorName}
                   </span>
                   <span className="text-xs text-tf-gray-400">
-                    {formatDistanceToNow(new Date(comment.createdAt), {
-                      addSuffix: true,
-                    })}
+                    {formatDistanceToNow(
+                      new Date(
+                        comment.createdAt.endsWith("Z")
+                          ? comment.createdAt
+                          : `${comment.createdAt}Z`,
+                      ),
+                      {
+                        addSuffix: true,
+                      },
+                    )}
                   </span>
                 </div>
                 <p className="text-sm text-tf-gray-700">{comment.body}</p>

@@ -208,9 +208,16 @@ export default function StudentDashboard() {
                   <ChapterBadge label={sub.chapterLabel} />
                   <FileTypeBadge type={sub.fileType} />
                   <span className="text-sm text-tf-gray-500">
-                    {formatDistanceToNow(new Date(sub.uploadedAt), {
-                      addSuffix: true,
-                    })}
+                    {formatDistanceToNow(
+                      new Date(
+                        sub.uploadedAt.endsWith("Z")
+                          ? sub.uploadedAt
+                          : `${sub.uploadedAt}Z`,
+                      ),
+                      {
+                        addSuffix: true,
+                      },
+                    )}
                   </span>
                 </div>
                 <span className="text-sm text-tf-blue-700 hover:underline">

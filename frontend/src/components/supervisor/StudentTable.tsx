@@ -10,6 +10,7 @@ interface Props {
 
 export default function StudentTable({ students }: Props) {
   const navigate = useNavigate();
+  console.log(students);
 
   return (
     <div className="w-full overflow-x-auto bg-white rounded-xl border border-tf-gray-100 shadow-sm">
