@@ -272,17 +272,17 @@ export default function StudentProjectPage() {
               </div>
 
               {/* Comments Accordion */}
-              <div className="p-5 bg-tf-gray-50 hover:bg-neutral-100 transition-all duration-200">
+              <div
+                className="group p-5 bg-tf-gray-50 hover:bg-neutral-100 hover:cursor-pointer transition-all duration-200"
+                onClick={() =>
+                  setExpandedComments((prev) => ({
+                    ...prev,
+                    [sub.id]: !prev[sub.id],
+                  }))
+                }
+              >
                 {/* Toggle Button */}
-                <button
-                  onClick={() =>
-                    setExpandedComments((prev) => ({
-                      ...prev,
-                      [sub.id]: !prev[sub.id],
-                    }))
-                  }
-                  className="flex items-center hover:cursor-pointer justify-between w-full text-sm font-medium text-tf-gray-700 hover:text-tf-black transition-colors focus:outline-none"
-                >
+                <button className="flex items-center justify-between w-full text-sm font-medium text-tf-gray-700 group-hover:cursor-pointer group-hover:text-tf-black transition-colors focus:outline-none">
                   <span>Comments ({comments[sub.id]?.length || 0})</span>
                   <HugeiconsIcon
                     icon={
