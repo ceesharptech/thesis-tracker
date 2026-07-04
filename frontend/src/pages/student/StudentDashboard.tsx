@@ -13,11 +13,17 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
 } from "../../../@/components/ui/select";
-import { CHAPTER_OPTIONS, MAX_FILE_SIZE_BYTES, ALLOWED_FILE_TYPES } from "@/lib/constants";
+import {
+  CHAPTER_OPTIONS,
+  MAX_FILE_SIZE_BYTES,
+  ALLOWED_FILE_TYPES,
+} from "@/lib/constants";
 import { getErrorMessage } from "@/lib/error";
 import { formatDistanceToNow } from "date-fns";
 import type { Submission, ChapterLabel } from "@/types";
+import { cn } from "../../../@/lib/utils";
 
 export default function StudentDashboard() {
   const navigate = useNavigate();
@@ -44,7 +50,9 @@ export default function StudentDashboard() {
   useEffect(() => {
     getMySubmissions()
       .then((data) => setSubmissions(data))
-      .catch((err) => toast.error(getErrorMessage(err) || "Failed to load submissions"))
+      .catch((err) =>
+        toast.error(getErrorMessage(err) || "Failed to load submissions"),
+      )
       .finally(() => setLoading(false));
   }, []);
 
@@ -90,52 +98,72 @@ export default function StudentDashboard() {
   return (
     <PageWrapper>
       {/* Upload Section */}
-      <div className="bg-white rounded-xl border border-tf-gray-100 p-6">
-        <h2 className="text-lg font-medium text-tf-black mb-4">Upload New Submission</h2>
+      <div className="bg-white rounded-xl border border-tf-gray-100 p-8">
+        <h2 className="text-lg font-medium text-tf-black mb-4">
+          Upload New Submission
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-          <div>
-            <label className="block text-xs font-medium text-tf-gray-500 mb-1.5">
-              Chapter / Draft
-            </label>
-            <Select
-              value={chapterLabel}
-              onValueChange={(value) => setChapterLabel(value as ChapterLabel)}
-            >
-              <SelectTrigger className="rounded-xl h-12">
-                <SelectValue placeholder="Select chapter" />
-              </SelectTrigger>
-              <SelectContent>
-                {CHAPTER_OPTIONS.map((opt) => (
-                  <SelectItem key={opt} value={opt}>
-                    {opt}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <div className="md:col-span-2 md:flex md:justify-start md:items-center md:gap-4">
+            <div>
+              <label className="block text-sm font-medium text-tf-gray-500 mb-1.5">
+                Chapter / Draft
+              </label>
+              <Select
+                value={chapterLabel}
+                onValueChange={(value) =>
+                  setChapterLabel(value as ChapterLabel)
+                }
+              >
+                <SelectTrigger
+                  className={cn(
+                    "rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
+                  )}
+                >
+                  <SelectValue placeholder="Select chapter" />
+                </SelectTrigger>
+                <SelectContent className={cn("bg-white")}>
+                  <SelectGroup>
+                    {CHAPTER_OPTIONS.map((opt) => (
+                      <SelectItem
+                        key={opt}
+                        value={opt}
+                        className={cn("hover:bg-tf-gray-50")}
+                      >
+                        {opt}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
 
-          <div>
-            <label className="block text-xs font-medium text-tf-gray-500 mb-1.5">
-              File (PDF or DOCX)
-            </label>
-            <Input
-              ref={fileInputRef}
-              type="file"
-              accept=".pdf,.docx"
-              onChange={handleFileSelect}
-              className="h-12 rounded-xl"
-            />
+            <div>
+              <label className="block text-sm font-medium text-tf-gray-500 mb-1.5">
+                File (PDF or DOCX)
+              </label>
+              <Input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.docx"
+                onChange={handleFileSelect}
+                className={cn(
+                  "rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
+                )}
+              />
+            </div>
           </div>
 
           <div className="md:col-span-3">
-            <label className="block text-xs font-medium text-tf-gray-500 mb-1.5">
+            <label className="block text-sm font-medium text-tf-gray-500 mb-1.5">
               Note (optional)
             </label>
             <Input
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="Add a short note for your supervisor..."
-              className="h-12 rounded-xl"
+              className={cn(
+                "h-12 rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
+              )}
             />
           </div>
 
@@ -172,7 +200,9 @@ export default function StudentDashboard() {
                   <ChapterBadge label={sub.chapterLabel} />
                   <FileTypeBadge type={sub.fileType} />
                   <span className="text-sm text-tf-gray-500">
-                    {formatDistanceToNow(new Date(sub.uploadedAt), { addSuffix: true })}
+                    {formatDistanceToNow(new Date(sub.uploadedAt), {
+                      addSuffix: true,
+                    })}
                   </span>
                 </div>
                 <span className="text-sm text-tf-blue-700 hover:underline">
@@ -181,9 +211,13 @@ export default function StudentDashboard() {
                     : "No comments yet"}
                 </span>
               </div>
-              <p className="text-sm text-tf-black mt-3 font-medium">{sub.fileName}</p>
+              <p className="text-sm text-tf-black mt-3 font-medium">
+                {sub.fileName}
+              </p>
               {sub.studentNote && (
-                <p className="text-sm text-tf-gray-600 mt-1 line-clamp-2">{sub.studentNote}</p>
+                <p className="text-sm text-tf-gray-600 mt-1 line-clamp-2">
+                  {sub.studentNote}
+                </p>
               )}
             </div>
           ))

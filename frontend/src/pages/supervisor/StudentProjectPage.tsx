@@ -186,7 +186,7 @@ export default function StudentProjectPage() {
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Add general feedback about this student's project..."
-          className="w-full min-h-[120px] rounded-xl border border-tf-gray-200 p-3 text-sm text-tf-black placeholder:text-tf-gray-400 focus:outline-none focus:ring-2 focus:ring-tf-blue-700 focus:ring-offset-1 resize-y"
+          className="w-full min-h-30 rounded-xl border border-tf-gray-200 p-3 text-sm text-tf-black placeholder:text-tf-gray-400 focus:outline-none focus:ring-2 focus:ring-tf-blue-700 focus:ring-offset-1 resize-y"
         />
       </div>
 
