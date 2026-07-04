@@ -21,7 +21,7 @@ export interface AuthUser {
   name: string;
   role: UserRole;
   identifier: string;
-  isFirstLogin: boolean;
+  is_first_login: boolean;
 }
 
 export interface Student {

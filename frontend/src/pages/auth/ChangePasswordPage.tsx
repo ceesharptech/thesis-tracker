@@ -56,8 +56,8 @@ export default function ChangePasswordPage() {
       toast.success("Password updated successfully");
 
       // If they were on first login, clear the flag in the local store
-      if (user && token && user.isFirstLogin) {
-        setAuth({ ...user, isFirstLogin: false }, token);
+      if (user && token && user.is_first_login) {
+        setAuth({ ...user, is_first_login: false }, token);
       }
 
       // Route to correct dashboard
@@ -80,7 +80,7 @@ export default function ChangePasswordPage() {
           Update your password
         </h1>
         <p className="text-sm text-tf-gray-500 mb-6 md:mb-8">
-          {user?.isFirstLogin
+          {user?.is_first_login
             ? "Please change your temporary password to continue."
             : "Enter your current password and choose a new one."}
         </p>

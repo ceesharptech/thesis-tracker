@@ -47,7 +47,7 @@ export default function LoginPage() {
       const res = await login(data.identifier, data.password);
       setAuth(res.user, res.access_token);
 
-      if (res.user.isFirstLogin) {
+      if (res.user.is_first_login) {
         navigate("/change-password");
       } else if (res.user.role === "supervisor") {
         navigate("/supervisor/dashboard");

@@ -16,7 +16,12 @@ import { Button } from "../../../@/components/ui/button";
 import { Input } from "../../../@/components/ui/input";
 import { getErrorMessage } from "@/lib/error";
 import { formatDistanceToNow } from "date-fns";
-import type { Student, Submission, Comment, PublishabilityStatus } from "@/types";
+import type {
+  Student,
+  Submission,
+  Comment,
+  PublishabilityStatus,
+} from "@/types";
 
 const STATUS_BUTTONS: {
   value: PublishabilityStatus;
@@ -56,7 +61,9 @@ export default function StudentProjectPage() {
         });
         setComments(commentMap);
       })
-      .catch((err) => toast.error(getErrorMessage(err) || "Failed to load student data"))
+      .catch((err) =>
+        toast.error(getErrorMessage(err) || "Failed to load student data"),
+      )
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -112,7 +119,9 @@ export default function StudentProjectPage() {
   if (!student) {
     return (
       <PageWrapper>
-        <div className="text-center py-16 text-tf-gray-500">Student not found.</div>
+        <div className="text-center py-16 text-tf-gray-500">
+          Student not found.
+        </div>
       </PageWrapper>
     );
   }
@@ -123,7 +132,9 @@ export default function StudentProjectPage() {
       <div className="bg-white rounded-xl border border-tf-gray-100 p-6">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-5">
           <div>
-            <h1 className="text-xl font-medium text-tf-black">{student.name}</h1>
+            <h1 className="text-xl font-medium text-tf-black">
+              {student.name}
+            </h1>
             <p className="text-sm text-tf-gray-500 font-mono mt-1">
               {student.matricNumber} · {student.department}
             </p>
@@ -135,7 +146,11 @@ export default function StudentProjectPage() {
               <Button
                 key={btn.value}
                 type="button"
-                variant={student.publishabilityStatus === btn.value ? btn.variant : "outline"}
+                variant={
+                  student.publishabilityStatus === btn.value
+                    ? btn.variant
+                    : "outline"
+                }
                 onClick={() => handleStatusChange(btn.value)}
                 className="rounded-xl h-10 px-4 text-sm"
               >
@@ -156,7 +171,9 @@ export default function StudentProjectPage() {
       {/* Supervisor Notes */}
       <div className="bg-white rounded-xl border border-tf-gray-100 p-6">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-medium text-tf-black">Supervisor Notes</h2>
+          <h2 className="text-lg font-medium text-tf-black">
+            Supervisor Notes
+          </h2>
           <Button
             onClick={handleSaveNotes}
             disabled={savingNotes}
@@ -192,7 +209,9 @@ export default function StudentProjectPage() {
                     <ChapterBadge label={sub.chapterLabel} />
                     <FileTypeBadge type={sub.fileType} />
                     <span className="text-sm text-tf-gray-500">
-                      {formatDistanceToNow(new Date(sub.uploadedAt), { addSuffix: true })}
+                      {formatDistanceToNow(new Date(sub.uploadedAt), {
+                        addSuffix: true,
+                      })}
                     </span>
                   </div>
                   <a
@@ -205,7 +224,9 @@ export default function StudentProjectPage() {
                   </a>
                 </div>
                 {sub.studentNote && (
-                  <p className="text-sm text-tf-gray-600 mt-3">{sub.studentNote}</p>
+                  <p className="text-sm text-tf-gray-600 mt-3">
+                    {sub.studentNote}
+                  </p>
                 )}
               </div>
 
@@ -216,13 +237,18 @@ export default function StudentProjectPage() {
                 </h3>
                 <div className="space-y-3 mb-4">
                   {(comments[sub.id] || []).map((comment) => (
-                    <div key={comment.id} className="bg-white p-3 rounded-lg border border-tf-gray-100">
+                    <div
+                      key={comment.id}
+                      className="bg-white p-3 rounded-lg border border-tf-gray-100"
+                    >
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-sm font-medium text-tf-black">
                           {comment.authorName}
                         </span>
                         <span className="text-xs text-tf-gray-400">
-                          {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
+                          {formatDistanceToNow(new Date(comment.createdAt), {
+                            addSuffix: true,
+                          })}
                         </span>
                       </div>
                       <p className="text-sm text-tf-gray-600">{comment.body}</p>
@@ -233,7 +259,10 @@ export default function StudentProjectPage() {
                   <Input
                     value={commentDraft[sub.id] || ""}
                     onChange={(e) =>
-                      setCommentDraft((prev) => ({ ...prev, [sub.id]: e.target.value }))
+                      setCommentDraft((prev) => ({
+                        ...prev,
+                        [sub.id]: e.target.value,
+                      }))
                     }
                     placeholder="Add a comment..."
                     className="bg-white rounded-xl h-10"

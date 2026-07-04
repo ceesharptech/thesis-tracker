@@ -84,10 +84,14 @@ export default function UploadStudentsPage() {
         if (!EXCEL_COLUMN_MAP.name.some((opt) => headers.includes(opt))) {
           missingColumns.push("Name");
         }
-        if (!EXCEL_COLUMN_MAP.matricNumber.some((opt) => headers.includes(opt))) {
+        if (
+          !EXCEL_COLUMN_MAP.matricNumber.some((opt) => headers.includes(opt))
+        ) {
           missingColumns.push("Matric Number");
         }
-        if (!EXCEL_COLUMN_MAP.projectTitle.some((opt) => headers.includes(opt))) {
+        if (
+          !EXCEL_COLUMN_MAP.projectTitle.some((opt) => headers.includes(opt))
+        ) {
           missingColumns.push("Project Title");
         }
 
@@ -166,7 +170,9 @@ export default function UploadStudentsPage() {
               <HugeiconsIcon icon={UserAdd01Icon} size={20} />
             </div>
             <div>
-              <h2 className="text-lg font-medium text-tf-black">Add Single Student</h2>
+              <h2 className="text-lg font-medium text-tf-black">
+                Add Single Student
+              </h2>
               <p className="text-sm text-tf-gray-500">
                 Create one student account manually.
               </p>
@@ -175,47 +181,75 @@ export default function UploadStudentsPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="block text-xs font-medium text-tf-gray-500">Full Name</label>
+              <label className="block text-xs font-medium text-tf-gray-500">
+                Full Name
+              </label>
               <Input
                 value={singleStudent.name}
                 onChange={(e) =>
-                  setSingleStudent((prev) => ({ ...prev, name: e.target.value }))
+                  setSingleStudent((prev) => ({
+                    ...prev,
+                    name: e.target.value,
+                  }))
                 }
                 placeholder="e.g. Amara Okafor"
-                className="h-12 rounded-xl"
+                className={cn(
+                  "h-12 rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
+                )}
               />
             </div>
             <div className="space-y-1.5">
-              <label className="block text-xs font-medium text-tf-gray-500">Matric Number</label>
+              <label className="block text-xs font-medium text-tf-gray-500">
+                Matric Number
+              </label>
               <Input
                 value={singleStudent.matricNumber}
                 onChange={(e) =>
-                  setSingleStudent((prev) => ({ ...prev, matricNumber: e.target.value }))
+                  setSingleStudent((prev) => ({
+                    ...prev,
+                    matricNumber: e.target.value,
+                  }))
                 }
                 placeholder="e.g. 22/11450"
-                className="h-12 rounded-xl"
+                className={cn(
+                  "h-12 rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
+                )}
               />
             </div>
             <div className="space-y-1.5 md:col-span-2">
-              <label className="block text-xs font-medium text-tf-gray-500">Project Title</label>
+              <label className="block text-xs font-medium text-tf-gray-500">
+                Project Title
+              </label>
               <Input
                 value={singleStudent.projectTitle}
                 onChange={(e) =>
-                  setSingleStudent((prev) => ({ ...prev, projectTitle: e.target.value }))
+                  setSingleStudent((prev) => ({
+                    ...prev,
+                    projectTitle: e.target.value,
+                  }))
                 }
                 placeholder="e.g. AI-Powered Crop Disease Detection"
-                className="h-12 rounded-xl"
+                className={cn(
+                  "h-12 rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
+                )}
               />
             </div>
             <div className="space-y-1.5 md:col-span-2">
-              <label className="block text-xs font-medium text-tf-gray-500">Department</label>
+              <label className="block text-xs font-medium text-tf-gray-500">
+                Department
+              </label>
               <Input
                 value={singleStudent.department}
                 onChange={(e) =>
-                  setSingleStudent((prev) => ({ ...prev, department: e.target.value }))
+                  setSingleStudent((prev) => ({
+                    ...prev,
+                    department: e.target.value,
+                  }))
                 }
                 placeholder="e.g. Computer Science"
-                className="h-12 rounded-xl"
+                className={cn(
+                  "h-12 rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
+                )}
               />
             </div>
           </div>
@@ -234,7 +268,9 @@ export default function UploadStudentsPage() {
         {/* Divider */}
         <div className="relative flex items-center">
           <div className="flex-1 border-t border-tf-gray-200" />
-          <span className="px-4 text-sm text-tf-gray-400">or upload in bulk</span>
+          <span className="px-4 text-sm text-tf-gray-400">
+            or upload in bulk
+          </span>
           <div className="flex-1 border-t border-tf-gray-200" />
         </div>
 
@@ -244,10 +280,13 @@ export default function UploadStudentsPage() {
             <HugeiconsIcon icon={InformationCircleIcon} size={24} />
           </div>
           <div>
-            <h2 className="text-lg font-medium text-tf-black mb-2">Required Excel Format</h2>
+            <h2 className="text-lg font-medium text-tf-black mb-2">
+              Required Excel Format
+            </h2>
             <p className="text-sm text-tf-gray-500 mb-4">
-              Your file must be a <strong>.xlsx</strong> or <strong>.xls</strong> file containing a
-              header row. Ensure your sheet includes the following columns (variants are accepted):
+              Your file must be a <strong>.xlsx</strong> or{" "}
+              <strong>.xls</strong> file containing a header row. Ensure your
+              sheet includes the following columns (variants are accepted):
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-tf-gray-50 p-4 rounded-xl border border-tf-gray-100">
@@ -275,7 +314,9 @@ export default function UploadStudentsPage() {
                 </div>
               </div>
               <div className="bg-tf-gray-50 p-4 rounded-xl border border-tf-gray-100">
-                <div className="text-sm font-medium text-tf-black mb-1">Department (Optional)</div>
+                <div className="text-sm font-medium text-tf-black mb-1">
+                  Department (Optional)
+                </div>
                 <div className="text-xs text-tf-gray-500 font-mono">
                   Accepts: department, dept
                 </div>
@@ -312,7 +353,11 @@ export default function UploadStudentsPage() {
             {headerErrors.length > 0 ? (
               <HugeiconsIcon icon={Alert01Icon} size={32} />
             ) : selectedFile ? (
-              <HugeiconsIcon icon={CheckmarkCircle01Icon} size={32} className="text-tf-green-700" />
+              <HugeiconsIcon
+                icon={CheckmarkCircle01Icon}
+                size={32}
+                className="text-tf-green-700"
+              />
             ) : (
               <HugeiconsIcon icon={FileUploadIcon} size={32} />
             )}
@@ -336,12 +381,13 @@ export default function UploadStudentsPage() {
           <div className="text-sm">
             {headerErrors.length > 0 ? (
               <p className="text-tf-red-700">
-                Your file is missing: <strong>{headerErrors.join(", ")}</strong>. Please update
-                your file and try again.
+                Your file is missing: <strong>{headerErrors.join(", ")}</strong>
+                . Please update your file and try again.
               </p>
             ) : selectedFile ? (
               <p className="text-tf-gray-500">
-                File ready for upload ({(selectedFile.size / 1024).toFixed(1)} KB)
+                File ready for upload ({(selectedFile.size / 1024).toFixed(1)}{" "}
+                KB)
               </p>
             ) : (
               <p className="text-tf-gray-500">Maximum file size: 20MB</p>
@@ -350,17 +396,21 @@ export default function UploadStudentsPage() {
         </div>
 
         {/* Action Button */}
-        {selectedFile && failedRows.length === 0 && headerErrors.length === 0 && (
-          <div className="flex justify-end animate-in fade-in duration-300">
-            <Button
-              onClick={handleUpload}
-              disabled={isSubmitting}
-              className="bg-tf-black text-white hover:bg-tf-gray-900 rounded-xl px-6 h-12 w-full md:w-auto"
-            >
-              {isSubmitting ? "Uploading & Processing..." : "Upload and Create Accounts"}
-            </Button>
-          </div>
-        )}
+        {selectedFile &&
+          failedRows.length === 0 &&
+          headerErrors.length === 0 && (
+            <div className="flex justify-end animate-in fade-in duration-300">
+              <Button
+                onClick={handleUpload}
+                disabled={isSubmitting}
+                className="bg-tf-black text-white hover:bg-tf-gray-900 rounded-xl px-6 h-12 w-full md:w-auto"
+              >
+                {isSubmitting
+                  ? "Uploading & Processing..."
+                  : "Upload and Create Accounts"}
+              </Button>
+            </div>
+          )}
 
         {/* Failed Rows Preview Table */}
         {failedRows.length > 0 && (
@@ -372,8 +422,8 @@ export default function UploadStudentsPage() {
                   Failed Rows ({failedRows.length})
                 </h3>
                 <p className="text-sm text-tf-gray-500 mt-1">
-                  These rows were skipped by the server. Fix them in your Excel file and upload
-                  again.
+                  These rows were skipped by the server. Fix them in your Excel
+                  file and upload again.
                 </p>
               </div>
             </div>
@@ -395,7 +445,9 @@ export default function UploadStudentsPage() {
                       className="h-12 border-b border-tf-gray-100 text-sm hover:bg-tf-gray-50"
                     >
                       <td className="px-4 py-2 text-tf-black">
-                        <span className={cn(!row.name && "text-tf-red-700 italic")}>
+                        <span
+                          className={cn(!row.name && "text-tf-red-700 italic")}
+                        >
                           {row.name || "Missing"}
                         </span>
                       </td>
