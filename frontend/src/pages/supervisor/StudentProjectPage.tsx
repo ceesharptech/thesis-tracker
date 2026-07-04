@@ -22,6 +22,7 @@ import type {
   Comment,
   PublishabilityStatus,
 } from "@/types";
+import { cn } from "../../../@/lib/utils";
 
 const STATUS_BUTTONS: {
   value: PublishabilityStatus;
@@ -152,7 +153,7 @@ export default function StudentProjectPage() {
                     : "outline"
                 }
                 onClick={() => handleStatusChange(btn.value)}
-                className="rounded-xl h-10 px-4 text-sm"
+                className="rounded-xl h-10 px-4 text-sm border-tf-gray-200"
               >
                 {btn.label}
               </Button>
@@ -177,7 +178,7 @@ export default function StudentProjectPage() {
           <Button
             onClick={handleSaveNotes}
             disabled={savingNotes}
-            className="bg-tf-black text-white rounded-xl h-9 px-4 text-sm"
+            className="bg-tf-gray-900 hover:bg-neutral-950 hover:cursor-pointer transition-all duration-200 text-white rounded-xl h-9 px-4 text-sm"
           >
             {savingNotes ? "Saving..." : "Save Notes"}
           </Button>
@@ -265,11 +266,13 @@ export default function StudentProjectPage() {
                       }))
                     }
                     placeholder="Add a comment..."
-                    className="bg-white rounded-xl h-10"
+                    className={cn(
+                      "h-12 w-full rounded-xl border-tf-gray-200 text-sm bg-white pr-12 focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
+                    )}
                   />
                   <Button
                     onClick={() => handleAddComment(sub.id)}
-                    className="bg-tf-black text-white rounded-xl h-10 px-4"
+                    className="bg-tf-gray-900 hover:bg-neutral-950 text-white rounded-xl h-12 px-6 hover:cursor-pointer transition-all duration-200"
                   >
                     Post
                   </Button>

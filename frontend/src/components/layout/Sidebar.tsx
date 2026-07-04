@@ -90,7 +90,7 @@ export default function Sidebar({ role }: Props) {
                 className="w-6 h-6 md:w-6 md:h-6"
               />
               <span className="hidden md:inline">{link.label}</span>
-              <span className="md:hidden">{link.label}</span>
+              <span className="md:hidden text-xs">{link.label}</span>
             </NavLink>
           );
         })}
@@ -101,7 +101,7 @@ export default function Sidebar({ role }: Props) {
           className="md:hidden flex flex-col items-center justify-center py-2 px-3 text-[10px] gap-1.5 rounded-lg text-tf-gray-500 hover:text-tf-gray-900 transition-colors"
         >
           <HugeiconsIcon icon={LogOut} className="w-6 h-6" />
-          <span>Sign out</span>
+          <span className="text-xs">Sign out</span>
         </button>
       </nav>
 

@@ -103,7 +103,7 @@ export default function StudentDashboard() {
           Upload New Submission
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-          <div className="md:col-span-2 md:flex md:justify-start md:items-center md:gap-4">
+          <div className="md:col-span-2 flex flex-col md:flex-row md:justify-start md:items-center gap-4">
             <div>
               <label className="block text-sm font-medium text-tf-gray-500 mb-1.5">
                 Chapter / Draft
@@ -116,12 +116,12 @@ export default function StudentDashboard() {
               >
                 <SelectTrigger
                   className={cn(
-                    "rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
+                    "h-12 rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
                   )}
                 >
                   <SelectValue placeholder="Select chapter" />
                 </SelectTrigger>
-                <SelectContent className={cn("bg-white")}>
+                <SelectContent>
                   <SelectGroup>
                     {CHAPTER_OPTIONS.map((opt) => (
                       <SelectItem
@@ -178,7 +178,6 @@ export default function StudentDashboard() {
           </div>
         </div>
       </div>
-
       {/* Submissions List */}
       <div className="space-y-4">
         <h2 className="text-lg font-medium text-tf-black">My Submissions</h2>
@@ -195,7 +194,7 @@ export default function StudentDashboard() {
               onClick={() => navigate(`/student/submission/${sub.id}`)}
               className="bg-white rounded-xl border border-tf-gray-100 p-5 cursor-pointer hover:bg-tf-gray-50 transition-colors"
             >
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-2">
                 <div className="flex items-center gap-3">
                   <ChapterBadge label={sub.chapterLabel} />
                   <FileTypeBadge type={sub.fileType} />
@@ -211,7 +210,7 @@ export default function StudentDashboard() {
                     : "No comments yet"}
                 </span>
               </div>
-              <p className="text-sm text-tf-black mt-3 font-medium">
+              <p className="text-base text-tf-black mt-3 font-medium">
                 {sub.fileName}
               </p>
               {sub.studentNote && (
