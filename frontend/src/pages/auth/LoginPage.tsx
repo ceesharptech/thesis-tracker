@@ -44,7 +44,7 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginForm) => {
     setErrorMsg(null);
     try {
-      const res = await login(data.identifier, data.password);
+      const res = await login(data.identifier.trim(), data.password.trim());
       setAuth(res.user, res.access_token);
 
       if (res.user.is_first_login) {
