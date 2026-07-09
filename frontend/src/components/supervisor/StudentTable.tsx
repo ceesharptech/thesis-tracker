@@ -10,7 +10,6 @@ interface Props {
 
 export default function StudentTable({ students }: Props) {
   const navigate = useNavigate();
-  console.log(students);
 
   return (
     <div className="w-full overflow-x-auto bg-white rounded-xl border border-tf-gray-100 shadow-sm">
@@ -21,6 +20,7 @@ export default function StudentTable({ students }: Props) {
             <th className="px-5 font-medium">Project Title</th>
             <th className="px-5 font-medium">Last Upload</th>
             <th className="px-5 font-medium">Chapter</th>
+            <th className="px-5 font-medium">Pending Review</th>
             <th className="px-5 font-medium">Status</th>
           </tr>
         </thead>
@@ -57,6 +57,15 @@ export default function StudentTable({ students }: Props) {
               <td className="px-5">
                 {student.lastChapterSubmitted ? (
                   <ChapterBadge label={student.lastChapterSubmitted} />
+                ) : (
+                  <span className="text-sm text-tf-gray-400">—</span>
+                )}
+              </td>
+              <td className="px-5">
+                {student.pendingSubmissionsCount > 0 ? (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-tf-amber-50 text-tf-amber-700">
+                    {student.pendingSubmissionsCount} pending
+                  </span>
                 ) : (
                   <span className="text-sm text-tf-gray-400">—</span>
                 )}

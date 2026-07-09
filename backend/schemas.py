@@ -40,6 +40,7 @@ class StudentListItem(BaseModel):
     lastSubmissionAt: Optional[datetime] = Field(alias="last_submission_at")
     lastChapterSubmitted: Optional[ChapterLabel] = Field(alias="last_chapter_submitted")
     supervisorNotes: Optional[str] = Field(alias="supervisor_notes")
+    pendingSubmissionsCount: int = Field(alias="pending_submissions_count", default=0)
 
     class Config:
         from_attributes = True
@@ -100,8 +101,17 @@ class SupervisorDashboardStats(BaseModel):
 class PublishabilityUpdate(BaseModel):
     status: PublishabilityStatus
 
+class SupervisorNoteEntry(BaseModel):
+    text: str
+    createdAt: datetime = Field(alias="created_at")
+    author: str
+
+    class Config:
+        populate_by_name = True
+
+
 class SupervisorNotesUpdate(BaseModel):
-    notes: Optional[str]
+    note: str
 
 class StudentCreate(BaseModel):
     name: str

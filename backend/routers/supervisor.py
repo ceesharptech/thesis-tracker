@@ -18,12 +18,22 @@ from dependencies import require_supervisor, get_current_user
 from auth import hash_password
 import openpyxl
 from typing import List
+import json
+from datetime import datetime
 
 router = APIRouter(prefix="/supervisor", tags=["Supervisor"], dependencies=[Depends(require_supervisor)])
 
 @router.get("/students", response_model=list[StudentListItem])
 def list_students(db: Session = Depends(get_db)):
     students = db.query(Student).all()
+    for student in students:
+        # A submission is pending review if it has no comments.
+        student.pending_submissions_count = db.query(Submission).filter(
+            Submission.student_id == student.id,
+            Submission.id.notin_(
+                db.query(Comment.submission_id).distinct()
+            ),
+        ).count()
     return students
 
 @router.post("/student", response_model=StudentListItem)
@@ -162,6 +172,12 @@ def get_student_detail(student_id: str, db: Session = Depends(get_db)):
     student = db.query(Student).filter(Student.id == student_id).first()
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
+    student.pending_submissions_count = db.query(Submission).filter(
+        Submission.student_id == student.id,
+        Submission.id.notin_(
+            db.query(Comment.submission_id).distinct()
+        ),
+    ).count()
     return student
 
 @router.get("/student/{student_id}/submissions", response_model=list[SubmissionOut])
@@ -193,11 +209,30 @@ def update_supervisor_notes(
     student_id: str,
     req: SupervisorNotesUpdate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     student = db.query(Student).filter(Student.id == student_id).first()
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
-    student.supervisor_notes = req.notes
+
+    # Parse existing notes as a JSON array, or start fresh.
+    notes: list[dict] = []
+    if student.supervisor_notes:
+        try:
+            parsed = json.loads(student.supervisor_notes)
+            if isinstance(parsed, list):
+                notes = parsed
+        except json.JSONDecodeError:
+            # Legacy plain-text notes: migrate to a single-entry list.
+            notes = [{"text": student.supervisor_notes, "createdAt": datetime.utcnow().isoformat(), "author": current_user.name}]
+
+    notes.append({
+        "text": req.note,
+        "createdAt": datetime.utcnow().isoformat(),
+        "author": current_user.name,
+    })
+
+    student.supervisor_notes = json.dumps(notes, default=str)
     db.commit()
     db.refresh(student)
     return student

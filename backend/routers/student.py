@@ -7,6 +7,7 @@ from schemas import SubmissionOut, CommentOut
 from dependencies import require_student, get_current_user
 from services.file_storage import save_upload_file
 from sqlalchemy import func
+from datetime import datetime
 
 router = APIRouter(prefix="/student", tags=["Student"], dependencies=[Depends(require_student)])
 
@@ -46,7 +47,8 @@ async def upload_submission(
         raise HTTPException(status_code=400, detail="Only PDF and DOCX allowed")
     
     file_url, file_name, size = await save_upload_file(file)
-    
+
+    now = datetime.utcnow()
     sub = Submission(
         student_id=student.id,
         chapter_label=chapter_label,
@@ -55,12 +57,13 @@ async def upload_submission(
         file_type=allowed[file.content_type],
         file_size_bytes=size,
         student_note=note,
+        uploaded_at=now,
     )
     db.add(sub)
-    
+
     # Update student stats
     student.submission_count += 1
-    student.last_submission_at = sub.uploaded_at
+    student.last_submission_at = now
     student.last_chapter_submitted = chapter_label
     
     db.commit()
@@ -86,3 +89,14 @@ def get_submission_detail(
 def get_comments(submission_id: str, db: Session = Depends(get_db)):
     comments = db.query(Comment).filter(Comment.submission_id == submission_id).all()
     return comments
+
+
+@router.get("/supervisor-notes")
+def get_supervisor_notes(
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user),
+):
+    student = db.query(Student).filter(Student.user_id == current_user.id).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student profile not found")
+    return {"supervisor_notes": student.supervisor_notes}

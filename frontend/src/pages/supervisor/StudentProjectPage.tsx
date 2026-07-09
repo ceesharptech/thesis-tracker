@@ -21,6 +21,7 @@ import type {
   Submission,
   Comment,
   PublishabilityStatus,
+  SupervisorNote,
 } from "@/types";
 import { cn } from "../../../@/lib/utils";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -47,12 +48,22 @@ export default function StudentProjectPage() {
   const [comments, setComments] = useState<Record<string, Comment[]>>({});
   const [loading, setLoading] = useState(true);
   const [commentDraft, setCommentDraft] = useState<Record<string, string>>({});
-  const [notes, setNotes] = useState("");
-  const [loadedNotes, setLoadedNotes] = useState("");
+  const [noteDraft, setNoteDraft] = useState("");
+  const [notes, setNotes] = useState<SupervisorNote[]>([]);
   const [savingNotes, setSavingNotes] = useState(false);
   const [expandedComments, setExpandedComments] = useState<
     Record<string, boolean>
   >({});
+
+  const parseNotes = (raw: string | null): SupervisorNote[] => {
+    if (!raw) return [];
+    try {
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -65,7 +76,7 @@ export default function StudentProjectPage() {
           (a, b) => Date.parse(b.uploadedAt) - Date.parse(a.uploadedAt),
         );
         setSubmissions(sortedSubmissions);
-        setLoadedNotes(studentData.supervisorNotes || "");
+        setNotes(parseNotes(studentData.supervisorNotes));
         return Promise.all(subsData.map((sub) => getComments(sub.id)));
       })
       .then((commentsData) => {
@@ -93,15 +104,16 @@ export default function StudentProjectPage() {
   };
 
   const handleSaveNotes = async () => {
-    if (!id || !student) return;
+    if (!id || !student || !noteDraft.trim()) return;
     setSavingNotes(true);
     try {
-      const updated = await updateStudentNotes(id, notes);
+      const updated = await updateStudentNotes(id, noteDraft.trim());
       setStudent(updated);
-      setNotes("");
-      toast.success("Notes saved");
+      setNotes(parseNotes(updated.supervisorNotes));
+      setNoteDraft("");
+      toast.success("Note added");
     } catch (err) {
-      toast.error(getErrorMessage(err) || "Failed to save notes");
+      toast.error(getErrorMessage(err) || "Failed to save note");
     } finally {
       setSavingNotes(false);
     }
@@ -188,39 +200,61 @@ export default function StudentProjectPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-tf-gray-100 p-6">
-        <h2 className="text-lg font-medium text-tf-black mb-2">Notes</h2>
-        {!loadedNotes ? (
-          <span className="text-sm font-normal text-tf-gray-400">
-            No notes added.
-          </span>
-        ) : (
-          <span className="text-sm font-normal text-tf-gray-900">
-            {student.supervisorNotes}
-          </span>
-        )}
-      </div>
-
       {/* Supervisor Notes */}
       <div className="bg-white rounded-xl border border-tf-gray-100 p-6">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-medium text-tf-black">
-            Supervisor Notes
+            Supervisor Notes ({notes.length})
           </h2>
-          <Button
-            onClick={handleSaveNotes}
-            disabled={savingNotes}
-            className="bg-tf-gray-900 hover:bg-neutral-950 hover:cursor-pointer transition-all duration-200 text-white rounded-xl h-9 px-4 text-sm"
-          >
-            {savingNotes ? "Saving..." : "Save Notes"}
-          </Button>
         </div>
-        <textarea
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder="Add general feedback about this student's project..."
-          className="w-full min-h-30 rounded-xl border border-tf-gray-200 p-3 text-sm text-tf-black placeholder:text-tf-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:ring-offset-1 resize-y transition-all duration-200"
-        />
+
+        {notes.length > 0 && (
+          <div className="space-y-3 mb-5">
+            {notes.map((note, idx) => (
+              <div
+                key={idx}
+                className="bg-tf-gray-50 p-4 rounded-xl border border-tf-gray-100"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-medium text-tf-black">
+                    {note.author || "Supervisor"}
+                  </span>
+                  <span className="text-xs text-tf-gray-400">
+                    {formatDistanceToNow(
+                      new Date(
+                        note.createdAt.endsWith("Z")
+                          ? note.createdAt
+                          : `${note.createdAt}Z`,
+                      ),
+                      { addSuffix: true },
+                    )}
+                  </span>
+                </div>
+                <p className="text-sm text-tf-gray-700 whitespace-pre-wrap">
+                  {note.text}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="flex flex-col gap-3">
+          <textarea
+            value={noteDraft}
+            onChange={(e) => setNoteDraft(e.target.value)}
+            placeholder="Add general feedback about this student's project..."
+            className="w-full min-h-30 rounded-xl border border-tf-gray-200 p-3 text-sm text-tf-black placeholder:text-tf-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:ring-offset-1 resize-y transition-all duration-200"
+          />
+          <div className="flex justify-end">
+            <Button
+              onClick={handleSaveNotes}
+              disabled={savingNotes || !noteDraft.trim()}
+              className="bg-tf-gray-900 hover:bg-neutral-950 hover:cursor-pointer transition-all duration-200 text-white rounded-xl h-9 px-4 text-sm"
+            >
+              {savingNotes ? "Adding..." : "Add Note"}
+            </Button>
+          </div>
+        </div>
       </div>
 
       {/* Submissions */}

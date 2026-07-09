@@ -1,7 +1,11 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { getMySubmissions, uploadSubmission } from "@/lib/api/student";
+import {
+  getMySubmissions,
+  uploadSubmission,
+  getSupervisorNotes,
+} from "@/lib/api/student";
 import PageWrapper from "@/components/layout/PageWrapper";
 import ChapterBadge from "@/components/shared/ChapterBadge";
 import FileTypeBadge from "@/components/shared/FileTypeBadge";
@@ -22,12 +26,13 @@ import {
 } from "@/lib/constants";
 import { getErrorMessage } from "@/lib/error";
 import { formatDistanceToNow } from "date-fns";
-import type { Submission, ChapterLabel } from "@/types";
+import type { Submission, ChapterLabel, SupervisorNote } from "@/types";
 import { cn } from "../../../@/lib/utils";
 
 export default function StudentDashboard() {
   const navigate = useNavigate();
   const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [supervisorNotes, setSupervisorNotes] = useState<SupervisorNote[]>([]);
   const [loading, setLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -51,16 +56,16 @@ export default function StudentDashboard() {
   };
 
   useEffect(() => {
-    getMySubmissions()
-      .then((data) => {
+    Promise.all([getMySubmissions(), getSupervisorNotes()])
+      .then(([data, notes]) => {
         const sortedData = [...data].sort(
           (a, b) => Date.parse(b.uploadedAt) - Date.parse(a.uploadedAt),
         );
         setSubmissions(sortedData);
-        console.log(data);
+        setSupervisorNotes(notes);
       })
       .catch((err) =>
-        toast.error(getErrorMessage(err) || "Failed to load submissions"),
+        toast.error(getErrorMessage(err) || "Failed to load dashboard data"),
       )
       .finally(() => setLoading(false));
   }, []);
@@ -187,6 +192,46 @@ export default function StudentDashboard() {
           </div>
         </div>
       </div>
+      {/* Supervisor Notes */}
+      <div className="bg-white rounded-xl border border-tf-gray-100 p-6">
+        <h2 className="text-lg font-medium text-tf-black mb-4">
+          Supervisor Notes ({supervisorNotes.length})
+        </h2>
+        {supervisorNotes.length === 0 ? (
+          <p className="text-sm text-tf-gray-500">
+            No supervisor notes yet.
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {supervisorNotes.map((note, idx) => (
+              <div
+                key={idx}
+                className="bg-tf-gray-50 p-4 rounded-xl border border-tf-gray-100"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-medium text-tf-black">
+                    {note.author || "Supervisor"}
+                  </span>
+                  <span className="text-xs text-tf-gray-400">
+                    {formatDistanceToNow(
+                      new Date(
+                        note.createdAt.endsWith("Z")
+                          ? note.createdAt
+                          : `${note.createdAt}Z`,
+                      ),
+                      { addSuffix: true },
+                    )}
+                  </span>
+                </div>
+                <p className="text-sm text-tf-gray-700 whitespace-pre-wrap">
+                  {note.text}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* Submissions List */}
       <div className="space-y-4">
         <h2 className="text-lg font-medium text-tf-black">My Submissions</h2>

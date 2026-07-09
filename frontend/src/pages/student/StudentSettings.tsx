@@ -44,13 +44,26 @@ export default function StudentSettings() {
       await changePassword(data.currentPassword, data.newPassword);
       toast.success("Password changed successfully");
       reset();
-    } catch (err: any) {
-      setError("currentPassword", {
-        message:
-          err.response?.data?.detail ||
-          err.message ||
-          "Failed to update password",
-      });
+    } catch (err: unknown) {
+      let message = "Failed to update password";
+      if (err instanceof Error) {
+        message = err.message;
+      }
+      if (
+        typeof err === "object" &&
+        err !== null &&
+        "response" in err &&
+        err.response &&
+        typeof err.response === "object" &&
+        "data" in err.response &&
+        err.response.data &&
+        typeof err.response.data === "object" &&
+        "detail" in err.response.data &&
+        typeof err.response.data.detail === "string"
+      ) {
+        message = err.response.data.detail;
+      }
+      setError("currentPassword", { message });
     }
   };
 

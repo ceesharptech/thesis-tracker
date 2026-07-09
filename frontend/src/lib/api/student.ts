@@ -1,5 +1,5 @@
 import client from "./client";
-import type { Submission, Comment, ChapterLabel } from "@/types";
+import type { Submission, Comment, ChapterLabel, SupervisorNote } from "@/types";
 
 type RawSubmission = {
   id: string;
@@ -85,4 +85,16 @@ export const uploadSubmission = async (
 export const getSubmissionComments = async (submissionId: string) => {
   const res = await client.get(`/student/submissions/${submissionId}/comments`);
   return res.data.map(mapComment) as Comment[];
+};
+
+export const getSupervisorNotes = async (): Promise<SupervisorNote[]> => {
+  const res = await client.get("/student/supervisor-notes");
+  const raw = res.data?.supervisor_notes;
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
 };

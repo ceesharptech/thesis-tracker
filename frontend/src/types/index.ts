@@ -24,6 +24,12 @@ export interface AuthUser {
   is_first_login: boolean;
 }
 
+export interface SupervisorNote {
+  text: string;
+  createdAt: string;
+  author: string;
+}
+
 export interface Student {
   id: string;
   name: string;
@@ -35,6 +41,7 @@ export interface Student {
   lastSubmissionAt: string | null;
   lastChapterSubmitted: ChapterLabel | null;
   supervisorNotes: string | null;
+  pendingSubmissionsCount: number;
 }
 
 export interface Submission {

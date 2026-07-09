@@ -59,26 +59,34 @@ type RawStudent = {
   lastChapterSubmitted?: string | null;
   supervisor_notes?: string | null;
   supervisorNotes?: string | null;
+  pending_submissions_count?: number;
+  pendingSubmissionsCount?: number;
 };
+
+const mapStudent = (student: RawStudent): Student => ({
+  id: student.id,
+  name: student.name,
+  matricNumber: student.matric_number ?? student.matricNumber ?? "",
+  projectTitle: student.project_title ?? student.projectTitle ?? "",
+  department: student.department,
+  publishabilityStatus:
+    student.publishability_status ?? student.publishabilityStatus ?? null,
+  submissionCount: student.submission_count ?? student.submissionCount ?? 0,
+  lastSubmissionAt: student.last_submission_at ?? student.lastSubmissionAt ?? null,
+  lastChapterSubmitted:
+    (student.last_chapter_submitted ?? student.lastChapterSubmitted ?? null) as
+      | ChapterLabel
+      | null,
+  supervisorNotes: student.supervisor_notes ?? student.supervisorNotes ?? null,
+  pendingSubmissionsCount:
+    student.pending_submissions_count ?? student.pendingSubmissionsCount ?? 0,
+});
 
 export const getStudents = async () => {
   const res = await client.get("/supervisor/students");
 
   // Map FastAPI's snake_case to frontend's camelCase
-  return res.data.map((student: RawStudent) => ({
-    id: student.id,
-    name: student.name,
-    matricNumber: student.matric_number ?? student.matricNumber,
-    projectTitle: student.project_title ?? student.projectTitle,
-    department: student.department,
-    publishabilityStatus:
-      student.publishability_status ?? student.publishabilityStatus,
-    submissionCount: student.submission_count ?? student.submissionCount,
-    lastSubmissionAt: student.last_submission_at ?? student.lastSubmissionAt,
-    lastChapterSubmitted:
-      student.last_chapter_submitted ?? student.lastChapterSubmitted,
-    supervisorNotes: student.supervisor_notes ?? student.supervisorNotes,
-  })) as Student[];
+  return res.data.map(mapStudent) as Student[];
 };
 
 export const getDashboardStats = async () => {
@@ -113,35 +121,12 @@ export const createStudent = async (data: {
     project_title: data.projectTitle,
     department: data.department,
   });
-  return {
-    ...res.data,
-    matricNumber: res.data.matric_number ?? res.data.matricNumber,
-    projectTitle: res.data.project_title ?? res.data.projectTitle,
-    publishabilityStatus:
-      res.data.publishability_status ?? res.data.publishabilityStatus,
-    submissionCount: res.data.submission_count ?? res.data.submissionCount,
-    lastSubmissionAt: res.data.last_submission_at ?? res.data.lastSubmissionAt,
-    lastChapterSubmitted:
-      res.data.last_chapter_submitted ?? res.data.lastChapterSubmitted,
-    supervisorNotes: res.data.supervisor_notes ?? res.data.supervisorNotes,
-  } as Student;
+  return mapStudent(res.data);
 };
 
 export const getStudentDetail = async (studentId: string) => {
   const res = await client.get(`/supervisor/student/${studentId}`);
-  // We will need to map this one to camelCase too when we get to Phase 4
-  return {
-    ...res.data,
-    matricNumber: res.data.matric_number ?? res.data.matricNumber,
-    projectTitle: res.data.project_title ?? res.data.projectTitle,
-    publishabilityStatus:
-      res.data.publishability_status ?? res.data.publishabilityStatus,
-    submissionCount: res.data.submission_count ?? res.data.submissionCount,
-    lastSubmissionAt: res.data.last_submission_at ?? res.data.lastSubmissionAt,
-    lastChapterSubmitted:
-      res.data.last_chapter_submitted ?? res.data.lastChapterSubmitted,
-    supervisorNotes: res.data.supervisor_notes ?? res.data.supervisorNotes,
-  } as Student;
+  return mapStudent(res.data);
 };
 
 export const getStudentSubmissions = async (studentId: string) => {
@@ -167,36 +152,14 @@ export const updatePublishabilityStatus = async (
   const res = await client.put(`/supervisor/student/${studentId}/publishability`, {
     status,
   });
-  return {
-    ...res.data,
-    matricNumber: res.data.matric_number ?? res.data.matricNumber,
-    projectTitle: res.data.project_title ?? res.data.projectTitle,
-    publishabilityStatus:
-      res.data.publishability_status ?? res.data.publishabilityStatus,
-    submissionCount: res.data.submission_count ?? res.data.submissionCount,
-    lastSubmissionAt: res.data.last_submission_at ?? res.data.lastSubmissionAt,
-    lastChapterSubmitted:
-      res.data.last_chapter_submitted ?? res.data.lastChapterSubmitted,
-    supervisorNotes: res.data.supervisor_notes ?? res.data.supervisorNotes,
-  } as Student;
+  return mapStudent(res.data);
 };
 
-export const updateStudentNotes = async (studentId: string, notes: string) => {
+export const updateStudentNotes = async (studentId: string, note: string) => {
   const res = await client.put(`/supervisor/student/${studentId}/notes`, {
-    notes,
+    note,
   });
-  return {
-    ...res.data,
-    matricNumber: res.data.matric_number ?? res.data.matricNumber,
-    projectTitle: res.data.project_title ?? res.data.projectTitle,
-    publishabilityStatus:
-      res.data.publishability_status ?? res.data.publishabilityStatus,
-    submissionCount: res.data.submission_count ?? res.data.submissionCount,
-    lastSubmissionAt: res.data.last_submission_at ?? res.data.lastSubmissionAt,
-    lastChapterSubmitted:
-      res.data.last_chapter_submitted ?? res.data.lastChapterSubmitted,
-    supervisorNotes: res.data.supervisor_notes ?? res.data.supervisorNotes,
-  } as Student;
+  return mapStudent(res.data);
 };
 
 export const getComments = async (submissionId: string) => {
