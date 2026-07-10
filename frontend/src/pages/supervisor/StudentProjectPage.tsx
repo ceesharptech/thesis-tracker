@@ -306,82 +306,94 @@ export default function StudentProjectPage() {
               </div>
 
               {/* Comments Accordion */}
-              <div
-                className="group p-5 bg-tf-gray-50 hover:bg-neutral-100 hover:cursor-pointer transition-all duration-200"
-                onClick={() =>
-                  setExpandedComments((prev) => ({
-                    ...prev,
-                    [sub.id]: !prev[sub.id],
-                  }))
-                }
-              >
+              <div className="group bg-tf-gray-50 hover:bg-neutral-100 hover:cursor-pointer transition-all duration-200">
                 {/* Toggle Button */}
-                <button className="flex items-center justify-between w-full text-sm font-medium text-tf-gray-700 group-hover:cursor-pointer group-hover:text-tf-black transition-colors focus:outline-none">
-                  <span>Comments ({comments[sub.id]?.length || 0})</span>
-                  <HugeiconsIcon
-                    icon={
-                      expandedComments[sub.id] ? ArrowUp01Icon : ArrowDown01Icon
-                    }
-                    size={20}
-                    className="text-tf-gray-500"
-                  />
-                </button>
+                <div
+                  className="h-full p-5"
+                  onClick={() =>
+                    setExpandedComments((prev) => ({
+                      ...prev,
+                      [sub.id]: !prev[sub.id],
+                    }))
+                  }
+                >
+                  <button
+                    className="flex items-center justify-between w-full text-sm 
+                    font-medium text-tf-gray-700 group-hover:cursor-pointer group-hover:text-tf-black
+                    transition-colors focus:outline-none"
+                  >
+                    <span>Comments ({comments[sub.id]?.length || 0})</span>
+                    <HugeiconsIcon
+                      icon={
+                        expandedComments[sub.id]
+                          ? ArrowUp01Icon
+                          : ArrowDown01Icon
+                      }
+                      size={20}
+                      className="text-tf-gray-500"
+                    />
+                  </button>
+                </div>
 
-                {/* Collapsible Content */}
-                {expandedComments[sub.id] && (
-                  <div className="mt-4 animate-in slide-in-from-top-2 fade-in duration-200">
-                    <div className="space-y-3 mb-4">
-                      {(comments[sub.id] || []).map((comment) => (
-                        <div
-                          key={comment.id}
-                          className="bg-white p-3 rounded-lg border border-tf-gray-100"
-                        >
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-sm font-medium text-tf-black">
-                              {comment.authorName}
-                            </span>
-                            <span className="text-xs text-tf-gray-400">
-                              {formatDistanceToNow(
-                                new Date(
-                                  comment.createdAt.endsWith("Z")
-                                    ? comment.createdAt
-                                    : `${comment.createdAt}Z`,
-                                ),
-                                {
-                                  addSuffix: true,
-                                },
-                              )}
-                            </span>
+                <div
+                  className={`px-5 ${expandedComments[sub.id] ? "pb-5" : "pb-0"}`}
+                >
+                  {/* Collapsible Content */}
+                  {expandedComments[sub.id] && (
+                    <div className=" animate-in slide-in-from-top-2 fade-in duration-200">
+                      <div className="space-y-3 mb-4">
+                        {(comments[sub.id] || []).map((comment) => (
+                          <div
+                            key={comment.id}
+                            className="bg-white p-3 rounded-lg border border-tf-gray-100"
+                          >
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-sm font-medium text-tf-black">
+                                {comment.authorName}
+                              </span>
+                              <span className="text-xs text-tf-gray-400">
+                                {formatDistanceToNow(
+                                  new Date(
+                                    comment.createdAt.endsWith("Z")
+                                      ? comment.createdAt
+                                      : `${comment.createdAt}Z`,
+                                  ),
+                                  {
+                                    addSuffix: true,
+                                  },
+                                )}
+                              </span>
+                            </div>
+                            <p className="text-sm text-tf-gray-600">
+                              {comment.body}
+                            </p>
                           </div>
-                          <p className="text-sm text-tf-gray-600">
-                            {comment.body}
-                          </p>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
+                      <div className="flex gap-2">
+                        <Input
+                          value={commentDraft[sub.id] || ""}
+                          onChange={(e) =>
+                            setCommentDraft((prev) => ({
+                              ...prev,
+                              [sub.id]: e.target.value,
+                            }))
+                          }
+                          placeholder="Add a comment..."
+                          className={cn(
+                            "h-12 w-full rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
+                          )}
+                        />
+                        <Button
+                          onClick={() => handleAddComment(sub.id)}
+                          className="bg-tf-gray-900 hover:bg-neutral-950 text-white rounded-xl h-12 px-6 hover:cursor-pointer transition-all duration-200"
+                        >
+                          Post
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Input
-                        value={commentDraft[sub.id] || ""}
-                        onChange={(e) =>
-                          setCommentDraft((prev) => ({
-                            ...prev,
-                            [sub.id]: e.target.value,
-                          }))
-                        }
-                        placeholder="Add a comment..."
-                        className={cn(
-                          "h-12 w-full rounded-xl border-tf-gray-200 text-sm bg-white focus-visible:ring-2 focus-visible:ring-tf-blue-700 focus-visible:ring-offset-1 transition-all duration-200",
-                        )}
-                      />
-                      <Button
-                        onClick={() => handleAddComment(sub.id)}
-                        className="bg-tf-gray-900 hover:bg-neutral-950 text-white rounded-xl h-12 px-6 hover:cursor-pointer transition-all duration-200"
-                      >
-                        Post
-                      </Button>
-                    </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           ))

@@ -72,11 +72,11 @@ const mapStudent = (student: RawStudent): Student => ({
   publishabilityStatus:
     student.publishability_status ?? student.publishabilityStatus ?? null,
   submissionCount: student.submission_count ?? student.submissionCount ?? 0,
-  lastSubmissionAt: student.last_submission_at ?? student.lastSubmissionAt ?? null,
-  lastChapterSubmitted:
-    (student.last_chapter_submitted ?? student.lastChapterSubmitted ?? null) as
-      | ChapterLabel
-      | null,
+  lastSubmissionAt:
+    student.last_submission_at ?? student.lastSubmissionAt ?? null,
+  lastChapterSubmitted: (student.last_chapter_submitted ??
+    student.lastChapterSubmitted ??
+    null) as ChapterLabel | null,
   supervisorNotes: student.supervisor_notes ?? student.supervisorNotes ?? null,
   pendingSubmissionsCount:
     student.pending_submissions_count ?? student.pendingSubmissionsCount ?? 0,
@@ -86,6 +86,14 @@ export const getStudents = async () => {
   const res = await client.get("/supervisor/students");
 
   // Map FastAPI's snake_case to frontend's camelCase
+  return res.data.map(mapStudent) as Student[];
+};
+
+// Search endpoint for students, returns a list of students matching the query (not implemented in backend yet)
+export const searchStudents = async (query: string) => {
+  const res = await client.get("/supervisor/students/search", {
+    params: { q: query },
+  });
   return res.data.map(mapStudent) as Student[];
 };
 
@@ -149,9 +157,12 @@ export const updatePublishabilityStatus = async (
   studentId: string,
   status: PublishabilityStatus,
 ) => {
-  const res = await client.put(`/supervisor/student/${studentId}/publishability`, {
-    status,
-  });
+  const res = await client.put(
+    `/supervisor/student/${studentId}/publishability`,
+    {
+      status,
+    },
+  );
   return mapStudent(res.data);
 };
 
@@ -163,7 +174,9 @@ export const updateStudentNotes = async (studentId: string, note: string) => {
 };
 
 export const getComments = async (submissionId: string) => {
-  const res = await client.get(`/supervisor/submissions/${submissionId}/comments`);
+  const res = await client.get(
+    `/supervisor/submissions/${submissionId}/comments`,
+  );
   return res.data.map((comment: RawComment) => ({
     id: comment.id,
     submissionId: comment.submission_id ?? comment.submissionId,
@@ -174,10 +187,13 @@ export const getComments = async (submissionId: string) => {
 };
 
 export const addComment = async (submissionId: string, body: string) => {
-  const res = await client.post(`/supervisor/submissions/${submissionId}/comments`, {
-    author_name: "Supervisor",
-    body,
-  });
+  const res = await client.post(
+    `/supervisor/submissions/${submissionId}/comments`,
+    {
+      author_name: "Supervisor",
+      body,
+    },
+  );
   return {
     id: res.data.id,
     submissionId: res.data.submission_id ?? res.data.submissionId,

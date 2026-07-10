@@ -1,19 +1,36 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { getStudents, getDashboardStats } from "@/lib/api/supervisor";
+import {
+  getStudents,
+  getDashboardStats,
+  searchStudents,
+} from "@/lib/api/supervisor";
 import PageWrapper from "@/components/layout/PageWrapper";
 import StudentTable from "@/components/supervisor/StudentTable";
 import EmptyState from "@/components/shared/EmptyState";
 import SkeletonRow from "@/components/shared/SkeletonRow";
 import { Button } from "../../../@/components/ui/button";
+import { Input } from "../../../@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../../@/components/ui/select";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   UserGroupIcon,
   Folder01Icon,
   Clock01Icon,
   CheckmarkBadge01Icon,
+  Search01Icon,
+  Cancel01Icon,
+  SearchVisualIcon,
+  ArrowDown01Icon,
+  FilterIcon,
 } from "@hugeicons/core-free-icons";
-import type { Student } from "@/types";
+import type { Student, PublishabilityStatus } from "@/types";
 
 type DashboardStats = {
   total_students: number;
@@ -25,20 +42,103 @@ type DashboardStats = {
 export default function SupervisorDashboard() {
   const [students, setStudents] = useState<Student[]>([]);
   const [stats, setStats] = useState<DashboardStats | null>(null);
+
+  // Loading states
   const [isLoading, setIsLoading] = useState(true);
+  const [isSearching, setIsSearching] = useState(false);
+
+  // Search & Filter states
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterPending, setFilterPending] = useState<"all" | "pending">("all");
+  const [filterStatus, setFilterStatus] = useState<
+    PublishabilityStatus | "all" | "no_status"
+  >("all");
+
   const navigate = useNavigate();
 
+  // 1. Initial Data Load
   useEffect(() => {
-    Promise.all([
-      getStudents().catch(() => []),
-      getDashboardStats().catch(() => null),
-    ])
-      .then(([studentsData, statsData]) => {
-        setStudents(studentsData as Student[]);
-        setStats(statsData as DashboardStats | null);
-      })
-      .finally(() => setIsLoading(false));
+    const fetchDashboardData = async () => {
+      try {
+        const studentsData = await getStudents();
+        setStudents(studentsData);
+      } catch (err: any) {
+        console.error(
+          "Failed to fetch students:",
+          err.response?.data || err.message,
+        );
+      }
+
+      try {
+        const statsData = await getDashboardStats();
+        setStats(statsData);
+      } catch (err: any) {
+        console.error(
+          "Failed to fetch stats:",
+          err.response?.data || err.message,
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboardData();
   }, []);
+
+  // 2. Debounced Search Effect
+  useEffect(() => {
+    if (isLoading) return;
+
+    const delayDebounceFn = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        if (searchQuery.trim() === "") {
+          const data = await getStudents();
+          setStudents(data);
+        } else {
+          const data = await searchStudents(searchQuery);
+          setStudents(data);
+        }
+      } catch (err: any) {
+        console.error("Search failed:", err.response?.data || err.message);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 400);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery, isLoading]);
+
+  // 3. Apply Filters locally
+  const filteredStudents = useMemo(() => {
+    return students.filter((student) => {
+      // Pending Review Filter
+      if (
+        filterPending === "pending" &&
+        student.pendingSubmissionsCount === 0
+      ) {
+        return false;
+      }
+
+      // Publishability Status Filter
+      if (filterStatus !== "all") {
+        if (
+          filterStatus === "no_status" &&
+          student.publishabilityStatus !== null
+        ) {
+          return false;
+        }
+        if (
+          filterStatus !== "no_status" &&
+          student.publishabilityStatus !== filterStatus
+        ) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [students, filterPending, filterStatus]);
 
   return (
     <PageWrapper>
@@ -113,16 +213,122 @@ export default function SupervisorDashboard() {
         </div>
       )}
 
-      {/* Main Table */}
-      {isLoading ? (
+      {/* Search and Filters Bar */}
+      {!isLoading && (stats?.total_students || 0) > 0 && (
+        <div className="mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          {/* Search */}
+          <div className="relative w-full md:max-w-md">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-tf-gray-400">
+              <HugeiconsIcon icon={Search01Icon} size={18} />
+            </div>
+            <Input
+              type="text"
+              placeholder="Search by name, matric, or project..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 pr-10 h-11 w-full rounded-xl bg-white border-tf-gray-200 text-sm focus-visible:ring-2 focus-visible:ring-blue-200 focus-visible:ring-offset-1 transition-all"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-tf-gray-400 hover:text-tf-gray-900 transition-colors"
+              >
+                <HugeiconsIcon icon={Cancel01Icon} size={18} />
+              </button>
+            )}
+          </div>
+
+          {/* Filters */}
+          <div className="flex items-center gap-3 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+            <div className="items-center gap-2 text-tf-gray-500 hidden md:flex">
+              <HugeiconsIcon icon={FilterIcon} size={18} />
+            </div>
+
+            {/* Pending Filter */}
+            <div className="relative shrink-0">
+              <select
+                value={filterPending}
+                onChange={(e) => setFilterPending(e.target.value as any)}
+                className="h-11 appearance-none rounded-xl bg-white border border-tf-gray-200 text-sm text-tf-gray-700 pl-4 pr-10 focus:outline-none transition-all hover:cursor-pointer"
+              >
+                <option value="all">All Submissions</option>
+                <option value="pending">Pending Review Only</option>
+              </select>
+              <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-tf-gray-400">
+                <HugeiconsIcon icon={ArrowDown01Icon} size={16} />
+              </div>
+            </div>
+
+            {/* Status Filter */}
+            <div className="relative shrink-0">
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value as any)}
+                className="h-11 appearance-none rounded-xl bg-white border border-tf-gray-200 text-sm text-tf-gray-700 pl-4 pr-10 focus:outline-none transition-all hover:cursor-pointer"
+              >
+                <option value="all">Any Status</option>
+                <option value="publishable">Publishable</option>
+                <option value="needs_further_work">Needs Further Work</option>
+                <option value="not_publishable">Not Publishable</option>
+                <option value="disapproved">Disapproved</option>
+                <option value="no_status">No Status</option>
+              </select>
+              <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-tf-gray-400">
+                <HugeiconsIcon icon={ArrowDown01Icon} size={16} />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Main Table Area */}
+      {isLoading || isSearching ? (
         <div className="rounded-xl border border-tf-gray-100 overflow-hidden">
           <div className="bg-tf-gray-50 h-12 border-b border-tf-gray-100" />
           {[...Array(5)].map((_, i) => (
             <SkeletonRow key={i} />
           ))}
         </div>
-      ) : students.length > 0 ? (
-        <StudentTable students={students} />
+      ) : filteredStudents.length > 0 ? (
+        <StudentTable students={filteredStudents} />
+      ) : searchQuery ? (
+        <EmptyState
+          icon={SearchVisualIcon}
+          heading="No results found"
+          sub={`We couldn't find any students matching "${searchQuery}".`}
+          action={
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSearchQuery("");
+                setFilterPending("all");
+                setFilterStatus("all");
+              }}
+              className="rounded-xl px-4"
+            >
+              Clear filters & search
+            </Button>
+          }
+        />
+      ) : filterPending !== "all" || filterStatus !== "all" ? (
+        <EmptyState
+          icon={FilterIcon}
+          heading="No matches for selected filters"
+          sub="Try adjusting your filter options to see more students."
+          action={
+            <Button
+              variant="outline"
+              onClick={() => {
+                setFilterPending("all");
+                setFilterStatus("all");
+              }}
+              className="rounded-xl px-4 border border-tf-gray-200 text-sm font-medium hover:bg-tf-gray-50 hover:cursor-pointer"
+            >
+              Clear filters
+            </Button>
+          }
+        />
       ) : (
         <EmptyState
           icon={UserGroupIcon}
