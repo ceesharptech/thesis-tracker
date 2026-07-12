@@ -10,6 +10,8 @@ import {
 import { useAuthStore } from "@/store/authStore";
 import { cn } from "../../../@/lib/utils";
 import type { UserRole } from "@/types";
+import { TbLayoutDashboardFilled } from "react-icons/tb";
+import { RiSettings3Fill } from "react-icons/ri";
 
 interface Props {
   role: UserRole;
@@ -32,6 +34,7 @@ export default function Sidebar({ role }: Props) {
             to: "/supervisor/dashboard",
             label: "Dashboard",
             icon: DashboardSquare02Icon,
+            activeIcon: TbLayoutDashboardFilled,
           },
           {
             to: "/supervisor/upload-students",
@@ -42,11 +45,12 @@ export default function Sidebar({ role }: Props) {
             to: "/supervisor/settings",
             label: "Settings",
             icon: Settings01Icon,
+            activeIcon: RiSettings3Fill,
           },
         ]
       : [
           { to: "/student/dashboard", label: "My Project", icon: Folder01Icon },
-          { to: "/student/settings", label: "Settings", icon: Settings01Icon },
+          { to: "/student/settings", label: "Settings", icon: Settings01Icon, activeIcon: RiSettings3Fill },
         ];
 
   return (
@@ -85,12 +89,17 @@ export default function Sidebar({ role }: Props) {
                 )
               }
             >
-              <HugeiconsIcon
-                icon={link.icon}
-                className="w-6 h-6 md:w-6 md:h-6"
-              />
-              <span className="hidden md:inline">{link.label}</span>
-              <span className="md:hidden text-xs">{link.label}</span>
+              {({ isActive }) => (
+        <>
+          {isActive && link.activeIcon ? (
+            <link.activeIcon className="w-6 h-6 md:w-6 md:h-6" />
+          ) : ( 
+            <HugeiconsIcon icon={link.icon} className="w-6 h-6 md:w-6 md:h-6" />
+          )}
+          <span className="hidden md:inline">{link.label}</span>
+          <span className="md:hidden text-xs">{link.label}</span>
+        </>
+      )}
             </NavLink>
           );
         })}

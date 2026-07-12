@@ -29,9 +29,11 @@ import {
   ArrowDown01Icon,
   ArrowUp01Icon,
   Download01Icon,
-  Mic02Icon,
-  PauseIcon,
+  // Mic02Icon,
+  // PauseIcon,
 } from "@hugeicons/core-free-icons";
+import { IoMic } from "react-icons/io5";
+import { BiSolidSquareRounded } from "react-icons/bi";
 
 const STATUS_BUTTONS: {
   value: PublishabilityStatus;
@@ -258,10 +260,10 @@ export default function StudentProjectPage() {
             >
               {recording ? (
                 <div className="animate-pulse text-red-600">
-                  <HugeiconsIcon icon={PauseIcon} size={22} />
+                  <BiSolidSquareRounded className="w-5 h-5 md:w-5 md:h-5" />
                 </div>
               ) : (
-                <HugeiconsIcon icon={Mic02Icon} size={22} />
+                <IoMic className="w-6 h-6 md:w-6 md:h-6" />
               )}
             </button>
             <Button
