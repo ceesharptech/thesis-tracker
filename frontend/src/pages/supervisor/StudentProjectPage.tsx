@@ -30,6 +30,7 @@ import {
   ArrowUp01Icon,
   Download01Icon,
   Mic02Icon,
+  PauseIcon,
 } from "@hugeicons/core-free-icons";
 
 const STATUS_BUTTONS: {
@@ -55,6 +56,7 @@ export default function StudentProjectPage() {
   const [expandedComments, setExpandedComments] = useState<
     Record<string, boolean>
   >({});
+  const [recording, setRecording] = useState(false);
 
   const parseNotes = (raw: string | null): SupervisorNote[] => {
     if (!raw) return [];
@@ -247,8 +249,20 @@ export default function StudentProjectPage() {
             className="w-full min-h-30 rounded-xl border border-tf-gray-200 p-3 text-sm text-tf-black placeholder:text-tf-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:ring-offset-1 resize-y transition-all duration-200"
           />
           <div className="flex gap-2 items-center justify-end">
-            <button className="text-tf-gray-500 rounded-full p-2 hover:bg-tf-gray-100 hover:text-tf-black hover:cursor-pointer transition-all duration-200">
-              <HugeiconsIcon icon={Mic02Icon} size={20} />
+            <button
+              className={`text-tf-gray-500 rounded-full p-2 hover:bg-tf-gray-100
+             hover:text-tf-black hover:cursor-pointer ${recording && "bg-tf-gray-100"} transition-all duration-200`}
+              onClick={() => {
+                setRecording(!recording);
+              }}
+            >
+              {recording ? (
+                <div className="animate-pulse text-red-600">
+                  <HugeiconsIcon icon={PauseIcon} size={22} />
+                </div>
+              ) : (
+                <HugeiconsIcon icon={Mic02Icon} size={22} />
+              )}
             </button>
             <Button
               onClick={handleSaveNotes}
