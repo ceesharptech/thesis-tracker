@@ -129,3 +129,51 @@ body {
 html {
   @apply font-sans;
 }
+
+/* ─── PDF.js text layer ──────────────────────────────────────────────────────
+ * Required for text selection to work on rendered PDF pages.
+ * PDF.js renders an invisible text layer on top of each canvas. These rules
+ * position the spans correctly and keep the text transparent (so only the
+ * canvas artwork shows) while still being selectable.
+ * @see Annotation Implementation Plan § 9.2
+ * ─────────────────────────────────────────────────────────────────────────── */
+.pdfjs-text-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 1;
+  line-height: 1;
+  text-size-adjust: none;
+  forced-color-adjust: none;
+  cursor: text;
+  /* pointer-events MUST remain enabled — removing this breaks text selection */
+  pointer-events: auto;
+}
+
+.pdfjs-text-layer span,
+.pdfjs-text-layer br {
+  color: transparent;
+  position: absolute;
+  white-space: pre;
+  transform-origin: 0% 0%;
+  /* mix-blend-mode: multiply ensures highlights show through on hover */
+  mix-blend-mode: multiply;
+  user-select: text;
+}
+
+/* ─── Annotation highlight pulse animation ───────────────────────────────────
+ * Applied to an annotation highlight div when the user clicks the matching
+ * sidebar card. The animation draws attention to the highlight's location.
+ * Class is added by AnnotationLayer and removed on animationend.
+ * Matches the tf-blue-700 (#185FA5) design token.
+ * @see Annotation Implementation Plan § 5.6 (AnnotationLayer specs)
+ * ─────────────────────────────────────────────────────────────────────────── */
+@keyframes annotation-pulse {
+  0%   { box-shadow: 0 0 0 0   rgba(24, 95, 165, 0.55); }
+  60%  { box-shadow: 0 0 0 8px rgba(24, 95, 165, 0);    }
+  100% { box-shadow: 0 0 0 0   rgba(24, 95, 165, 0);    }
+}
+
+.annotation-pulse {
+  animation: annotation-pulse 0.65s ease-out;
+}

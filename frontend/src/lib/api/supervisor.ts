@@ -6,6 +6,8 @@ import type {
   Comment,
   PublishabilityStatus,
   ChapterLabel,
+  Annotation,
+  AnnotationRect,
 } from "@/types";
 
 type RawSubmission = {
@@ -28,6 +30,16 @@ type RawSubmission = {
   uploadedAt?: string;
   comment_count?: number;
   commentCount?: number;
+  /** New field added by backend for DOCX→PDF conversion (Annotation feature § 3.2) */
+  pdf_url?: string | null;
+  pdfUrl?: string | null;
+  /**
+   * WORKAROUND: Backend may add annotation_count to SubmissionResponse in the future.
+   * Until then, the viewer fetches annotations separately to get the count.
+   * Remove this field and the workaround once backend exposes annotation_count.
+   */
+  annotation_count?: number;
+  annotationCount?: number;
 };
 
 type RawComment = {
@@ -150,6 +162,12 @@ export const getStudentSubmissions = async (studentId: string) => {
     studentNote: sub.student_note ?? sub.studentNote,
     uploadedAt: sub.uploaded_at ?? sub.uploadedAt,
     commentCount: sub.comment_count ?? sub.commentCount ?? 0,
+    // Annotation feature: pdf_url is the converted PDF path for DOCX uploads.
+    // Falls back to null — AnnotationEditorPage uses fileUrl directly when null.
+    pdfUrl: sub.pdf_url ?? sub.pdfUrl ?? null,
+    // WORKAROUND: annotation_count not yet on SubmissionResponse.
+    // Remove ?? undefined once backend adds annotation_count to the schema.
+    annotationCount: sub.annotation_count ?? sub.annotationCount ?? undefined,
   })) as Submission[];
 };
 
@@ -201,4 +219,96 @@ export const addComment = async (submissionId: string, body: string) => {
     body: res.data.body,
     createdAt: res.data.created_at ?? res.data.createdAt,
   } as Comment;
+};
+
+// ─── Annotation API functions (Annotation feature § 5.3) ─────────────────────
+// All rects are stored as JSON strings in the backend but exposed as
+// AnnotationRect[] here. JSON.parse / JSON.stringify happen only in this layer.
+
+/** Raw annotation shape returned by the backend before camelCase mapping. */
+type RawAnnotation = {
+  id: string;
+  submission_id: string;
+  page_number: number;
+  rects: string;         // JSON string of AnnotationRect[]
+  selected_text: string;
+  comment: string;
+  author_id: string;
+  author_name: string;
+  resolved: boolean;
+  created_at: string;
+};
+
+/** Maps a raw backend annotation to the frontend Annotation type. */
+const mapAnnotation = (raw: RawAnnotation): Annotation => ({
+  id: raw.id,
+  submissionId: raw.submission_id,
+  pageNumber: raw.page_number,
+  rects: JSON.parse(raw.rects) as AnnotationRect[],
+  selectedText: raw.selected_text,
+  comment: raw.comment,
+  authorId: raw.author_id,
+  authorName: raw.author_name,
+  resolved: raw.resolved,
+  createdAt: raw.created_at,
+});
+
+/**
+ * GET /supervisor/submissions/{id}/annotations
+ * Returns all annotations for a submission ordered by page then created_at.
+ * Returns [] when no annotations exist (not a 404).
+ */
+export const getAnnotations = async (submissionId: string): Promise<Annotation[]> => {
+  const res = await client.get(`/supervisor/submissions/${submissionId}/annotations`);
+  return (res.data as RawAnnotation[]).map(mapAnnotation);
+};
+
+/**
+ * POST /supervisor/submissions/{id}/annotations
+ * Creates a new annotation. author_id is set server-side from the JWT.
+ * rects is stringified here before sending; parsed on the returned object.
+ */
+export const createAnnotation = async (
+  submissionId: string,
+  payload: {
+    pageNumber: number;
+    rects: AnnotationRect[];
+    selectedText: string;
+    comment: string;
+  },
+): Promise<Annotation> => {
+  const body = {
+    page_number: payload.pageNumber,
+    rects: JSON.stringify(payload.rects),  // backend expects JSON string
+    selected_text: payload.selectedText,
+    comment: payload.comment,
+  };
+  const res = await client.post(
+    `/supervisor/submissions/${submissionId}/annotations`,
+    body,
+  );
+  return mapAnnotation(res.data as RawAnnotation);
+};
+
+/**
+ * PATCH /supervisor/annotations/{id}
+ * Edits the comment text of an existing annotation.
+ * Only the author can edit their own annotations (validated server-side).
+ */
+export const updateAnnotation = async (
+  annotationId: string,
+  comment: string,
+): Promise<Annotation> => {
+  const res = await client.patch(`/supervisor/annotations/${annotationId}`, {
+    comment,
+  });
+  return mapAnnotation(res.data as RawAnnotation);
+};
+
+/**
+ * DELETE /supervisor/annotations/{id}
+ * Permanently deletes an annotation. Only the author can delete (server-side).
+ */
+export const deleteAnnotation = async (annotationId: string): Promise<void> => {
+  await client.delete(`/supervisor/annotations/${annotationId}`);
 };

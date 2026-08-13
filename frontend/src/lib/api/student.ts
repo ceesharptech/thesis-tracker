@@ -1,5 +1,5 @@
 import client from "./client";
-import type { Submission, Comment, ChapterLabel, SupervisorNote } from "@/types";
+import type { Submission, Comment, ChapterLabel, SupervisorNote, Annotation, AnnotationRect } from "@/types";
 
 type RawSubmission = {
   id: string;
@@ -21,6 +21,16 @@ type RawSubmission = {
   uploadedAt?: string;
   comment_count?: number;
   commentCount?: number;
+  /** New field added by backend for DOCX→PDF conversion (Annotation feature § 3.2) */
+  pdf_url?: string | null;
+  pdfUrl?: string | null;
+  /**
+   * WORKAROUND: Backend may add annotation_count to SubmissionResponse in the future.
+   * Until then, AnnotationViewerPage fetches getAnnotations() to determine count.
+   * Remove this field and the workaround once backend exposes annotation_count.
+   */
+  annotation_count?: number;
+  annotationCount?: number;
 };
 
 type RawComment = {
@@ -46,6 +56,12 @@ const mapSubmission = (sub: RawSubmission): Submission =>
     studentNote: sub.student_note ?? sub.studentNote,
     uploadedAt: sub.uploaded_at ?? sub.uploadedAt,
     commentCount: sub.comment_count ?? sub.commentCount ?? 0,
+    // Annotation feature: pdf_url is the converted PDF path for DOCX uploads.
+    // Falls back to null — AnnotationViewerPage uses fileUrl directly when null.
+    pdfUrl: sub.pdf_url ?? sub.pdfUrl ?? null,
+    // WORKAROUND: annotation_count not yet on SubmissionResponse.
+    // Remove ?? undefined once backend adds annotation_count to the schema.
+    annotationCount: sub.annotation_count ?? sub.annotationCount ?? undefined,
   } as Submission);
 
 const mapComment = (comment: RawComment): Comment =>
@@ -98,3 +114,55 @@ export const getSupervisorNotes = async (): Promise<SupervisorNote[]> => {
     return [];
   }
 };
+
+// ─── Annotation API functions (Annotation feature § 5.3) ─────────────────────
+// All rects are stored as JSON strings in the backend but exposed as
+// AnnotationRect[] here. JSON.parse / JSON.stringify happen only in this layer.
+
+/** Raw annotation shape returned by the backend before camelCase mapping. */
+type RawAnnotation = {
+  id: string;
+  submission_id: string;
+  page_number: number;
+  rects: string;         // JSON string of AnnotationRect[]
+  selected_text: string;
+  comment: string;
+  author_id: string;
+  author_name: string;
+  resolved: boolean;
+  created_at: string;
+};
+
+/** Maps a raw backend annotation to the frontend Annotation type. */
+const mapAnnotation = (raw: RawAnnotation): Annotation => ({
+  id: raw.id,
+  submissionId: raw.submission_id,
+  pageNumber: raw.page_number,
+  rects: JSON.parse(raw.rects) as AnnotationRect[],
+  selectedText: raw.selected_text,
+  comment: raw.comment,
+  authorId: raw.author_id,
+  authorName: raw.author_name,
+  resolved: raw.resolved,
+  createdAt: raw.created_at,
+});
+
+/**
+ * GET /student/submissions/{id}/annotations
+ * Returns all annotations for a submission (read-only for the student).
+ * Restricted server-side to submissions belonging to the requesting student.
+ */
+export const getAnnotations = async (submissionId: string): Promise<Annotation[]> => {
+  const res = await client.get(`/student/submissions/${submissionId}/annotations`);
+  return (res.data as RawAnnotation[]).map(mapAnnotation);
+};
+
+/**
+ * PATCH /student/annotations/{id}/resolve
+ * Marks a single annotation as resolved by the student.
+ * Validated server-side: annotation must belong to the requesting student's submission.
+ */
+export const resolveAnnotation = async (annotationId: string): Promise<void> => {
+  await client.patch(`/student/annotations/${annotationId}/resolve`);
+};
+

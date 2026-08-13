@@ -55,6 +55,21 @@ export interface Submission {
   studentNote: string | null;
   uploadedAt: string;
   commentCount: number;
+  /**
+   * Path to the server-converted PDF version of a DOCX submission.
+   * Null when the original upload was already a PDF (fileUrl is used directly).
+   * Populated by the backend after LibreOffice conversion.
+   * @see ThesisFlow Annotation Implementation Plan § 3.2
+   */
+  pdfUrl: string | null;
+  /**
+   * Total count of inline annotations on this submission.
+   * Populated by the backend on SubmissionResponse.
+   * WORKAROUND: Until backend exposes this field, the AnnotationViewerPage
+   * fetches getAnnotations() on mount to determine count. Remove workaround
+   * once backend adds annotation_count to SubmissionResponse.
+   */
+  annotationCount?: number;
 }
 
 export interface Comment {
@@ -72,4 +87,49 @@ export interface StudentImportRow {
   department: string;
   isValid: boolean;
   errors: string[];
+}
+
+// ─── Annotation feature types ────────────────────────────────────────────────
+// Added for PDF/DOCX inline annotation feature.
+// @see ThesisFlow Annotation Implementation Plan § 5.2
+
+/**
+ * A single highlight rectangle stored as page-fraction coordinates (0.0–1.0).
+ * Zoom-independent: multiply by the rendered page pixel dimensions to get
+ * absolute pixel positions for rendering.
+ */
+export interface AnnotationRect {
+  x: number;      // fraction of page width,  0.0–1.0
+  y: number;      // fraction of page height, 0.0–1.0
+  width: number;  // fraction of page width
+  height: number; // fraction of page height
+}
+
+/**
+ * A fully saved annotation as returned by the backend.
+ * NOTE: the backend stores `rects` as a JSON string. Parsing/stringifying
+ * happens exclusively in the API layer (supervisor.ts / student.ts).
+ * All components always receive AnnotationRect[], never raw strings.
+ */
+export interface Annotation {
+  id: string;
+  submissionId: string;
+  pageNumber: number;
+  rects: AnnotationRect[];  // parsed from JSON string on receipt
+  selectedText: string;
+  comment: string;
+  authorId: string;
+  authorName: string;
+  resolved: boolean;
+  createdAt: string;        // ISO 8601 string
+}
+
+/**
+ * A text selection in progress that has not yet been saved as an Annotation.
+ * Exists only in local component state while CommentPopup is open.
+ */
+export interface PendingAnnotation {
+  pageNumber: number;
+  rects: AnnotationRect[];
+  selectedText: string;
 }
