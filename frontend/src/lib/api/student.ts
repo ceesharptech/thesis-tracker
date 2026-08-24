@@ -1,5 +1,12 @@
 import client from "./client";
-import type { Submission, Comment, ChapterLabel, SupervisorNote, Annotation, AnnotationRect } from "@/types";
+import type {
+  Submission,
+  Comment,
+  ChapterLabel,
+  SupervisorNote,
+  Annotation,
+  AnnotationRect,
+} from "@/types";
 
 type RawSubmission = {
   id: string;
@@ -62,7 +69,7 @@ const mapSubmission = (sub: RawSubmission): Submission =>
     // WORKAROUND: annotation_count not yet on SubmissionResponse.
     // Remove ?? undefined once backend adds annotation_count to the schema.
     annotationCount: sub.annotation_count ?? sub.annotationCount ?? undefined,
-  } as Submission);
+  }) as Submission;
 
 const mapComment = (comment: RawComment): Comment =>
   ({
@@ -71,7 +78,7 @@ const mapComment = (comment: RawComment): Comment =>
     authorName: comment.author_name ?? comment.authorName,
     body: comment.body,
     createdAt: comment.created_at ?? comment.createdAt,
-  } as Comment);
+  }) as Comment;
 
 export const getMySubmissions = async () => {
   const res = await client.get("/student/submissions");
@@ -124,7 +131,7 @@ type RawAnnotation = {
   id: string;
   submission_id: string;
   page_number: number;
-  rects: string;         // JSON string of AnnotationRect[]
+  rects: string; // JSON string of AnnotationRect[]
   selected_text: string;
   comment: string;
   author_id: string;
@@ -152,8 +159,12 @@ const mapAnnotation = (raw: RawAnnotation): Annotation => ({
  * Returns all annotations for a submission (read-only for the student).
  * Restricted server-side to submissions belonging to the requesting student.
  */
-export const getAnnotations = async (submissionId: string): Promise<Annotation[]> => {
-  const res = await client.get(`/student/submissions/${submissionId}/annotations`);
+export const getSupervisorAnnotations = async (
+  submissionId: string,
+): Promise<Annotation[]> => {
+  const res = await client.get(
+    `/student/submissions/${submissionId}/annotations`,
+  );
   return (res.data as RawAnnotation[]).map(mapAnnotation);
 };
 
@@ -162,7 +173,8 @@ export const getAnnotations = async (submissionId: string): Promise<Annotation[]
  * Marks a single annotation as resolved by the student.
  * Validated server-side: annotation must belong to the requesting student's submission.
  */
-export const resolveAnnotation = async (annotationId: string): Promise<void> => {
+export const resolveAnnotation = async (
+  annotationId: string,
+): Promise<void> => {
   await client.patch(`/student/annotations/${annotationId}/resolve`);
 };
-

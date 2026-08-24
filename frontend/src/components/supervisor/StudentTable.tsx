@@ -49,9 +49,14 @@ export default function StudentTable({ students }: Props) {
               </td>
               <td className="px-5 text-sm text-tf-gray-500">
                 {student.lastSubmissionAt
-                  ? formatDistanceToNow(new Date(student.lastSubmissionAt), {
-                      addSuffix: true,
-                    })
+                  ? formatDistanceToNow(
+                      new Date(
+                        student.lastSubmissionAt.endsWith("Z")
+                          ? student.lastSubmissionAt
+                          : `${student.lastSubmissionAt}Z`,
+                      ),
+                      { addSuffix: true },
+                    )
                   : "—"}
               </td>
               <td className="px-5">

@@ -11,13 +11,6 @@ import EmptyState from "@/components/shared/EmptyState";
 import SkeletonRow from "@/components/shared/SkeletonRow";
 import { Button } from "../../../@/components/ui/button";
 import { Input } from "../../../@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../../@/components/ui/select";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   UserGroupIcon,
@@ -263,7 +256,7 @@ export default function SupervisorDashboard() {
             {/* Status Filter */}
             <div className="relative shrink-0">
               <select
-                value={filterStatus}
+                value={filterStatus ?? ""}
                 onChange={(e) => setFilterStatus(e.target.value as any)}
                 className="h-11 appearance-none rounded-xl bg-white border border-tf-gray-200 text-sm text-tf-gray-700 pl-4 pr-10 focus:outline-none transition-all hover:cursor-pointer"
               >
