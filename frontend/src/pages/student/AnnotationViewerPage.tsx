@@ -96,6 +96,10 @@ export default function AnnotationViewerPage() {
     Record<number, PageDimensions>
   >({});
   const [loading, setLoading] = useState(true);
+  // Sidebar open on desktop by default, closed on mobile
+  const [sidebarOpen, setSidebarOpen] = useState(
+    () => window.innerWidth >= 768,
+  );
 
   const pdfViewerRef = useRef<PDFViewerHandle>(null);
 
@@ -208,22 +212,37 @@ export default function AnnotationViewerPage() {
           </span>
         </div>
 
-        {/* Annotation summary */}
-        <div className="flex items-center gap-2 text-xs shrink-0">
-          {annotationCount > 0 ? (
-            <span className="text-tf-gray-500">
-              {resolvedCount}/{annotationCount} resolved
-            </span>
-          ) : (
-            <span className="text-tf-gray-400">No annotations yet</span>
-          )}
+        {/* Annotation summary + sidebar toggle */}
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-1 text-xs">
+            {annotationCount > 0 ? (
+              <span className="text-tf-gray-500">
+                {resolvedCount}/{annotationCount}
+                <span className="hidden sm:inline"> resolved</span>
+              </span>
+            ) : (
+              <span className="text-tf-gray-400">No annotations</span>
+            )}
+          </div>
+          {/* Sidebar toggle */}
+          <button
+            onClick={() => setSidebarOpen((o) => !o)}
+            aria-label={sidebarOpen ? "Hide annotations panel" : "Show annotations panel"}
+            title={sidebarOpen ? "Hide panel" : "Show panel"}
+            className="p-1.5 rounded-lg text-tf-gray-400 hover:text-tf-black hover:bg-tf-gray-100 transition-colors"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <line x1="15" y1="3" x2="15" y2="21" />
+            </svg>
+          </button>
         </div>
       </header>
 
-      {/* ── Body: PDF area + Sidebar ─────────────────────────────────────────  */}
+      {/* ── Body: PDF area + Sidebar ───────────────────────────────────────── */}
       <div className="flex flex-1 overflow-hidden">
         {/* PDF scroll area */}
-        <div className="flex-1 overflow-hidden relative">
+        <div className="flex-1 overflow-hidden relative min-w-0">
           <PDFViewer
             ref={pdfViewerRef}
             pdfUrl={pdfUrl}
@@ -253,14 +272,21 @@ export default function AnnotationViewerPage() {
           })}
         </div>
 
-        {/* Annotation sidebar — student mode */}
-        <AnnotationSidebar
-          annotations={annotations}
-          activeAnnotationId={activeAnnotationId}
-          onAnnotationClick={handleAnnotationClick}
-          onResolve={handleResolve}
-          readOnly={true}
-        />
+        {/* Annotation sidebar — collapsible */}
+        <div
+          className={[
+            "transition-all duration-200 overflow-hidden shrink-0",
+            sidebarOpen ? "w-80" : "w-0",
+          ].join(" ")}
+        >
+          <AnnotationSidebar
+            annotations={annotations}
+            activeAnnotationId={activeAnnotationId}
+            onAnnotationClick={handleAnnotationClick}
+            onResolve={handleResolve}
+            readOnly={true}
+          />
+        </div>
       </div>
     </div>
   );

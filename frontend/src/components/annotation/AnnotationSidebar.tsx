@@ -357,8 +357,7 @@ export default function AnnotationSidebar({
 
   return (
     <aside
-      className="flex flex-col h-full bg-tf-gray-50 border-l border-tf-gray-100"
-      style={{ width: 320, minWidth: 320 }}
+      className="flex flex-col h-full w-full bg-tf-gray-50 border-l border-tf-gray-100"
       aria-label="Annotations panel"
     >
       {/* Sidebar header */}
