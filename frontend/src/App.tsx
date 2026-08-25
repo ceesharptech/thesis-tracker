@@ -10,6 +10,8 @@ import SupervisorSettings from "@/pages/supervisor/SupervisorSettings";
 import StudentDashboard from "@/pages/student/StudentDashboard";
 import SubmissionDetailPage from "@/pages/student/SubmissionDetailPage";
 import StudentSettings from "@/pages/student/StudentSettings";
+import AnnotationEditorPage from "@/pages/supervisor/AnnotationEditorPage";
+import AnnotationViewerPage from "@/pages/student/AnnotationViewerPage";
 import AppShell from "@/components/layout/AppShell";
 import ProtectedRoute from "@/router/ProtectedRoute";
 import RoleRoute from "@/router/RoleRoute";
@@ -88,6 +90,30 @@ export default function App() {
               />
               <Route path="/student/settings" element={<StudentSettings />} />
             </Route>
+          </Route>
+        </Route>
+
+        {/*
+         * Annotation routes — OUTSIDE AppShell (no sidebar/topbar from the shell).
+         * These pages manage their own full-screen topbar internally.
+         * Still protected by ProtectedRoute + RoleRoute guards.
+         * @see ThesisFlow Annotation Implementation Plan § 5.5 (new routes)
+         */}
+        <Route element={<ProtectedRoute />}>
+          <Route element={<RoleRoute allowedRole="supervisor" />}>
+            <Route
+              path="/supervisor/submission/:id/annotate"
+              element={<AnnotationEditorPage />}
+            />
+          </Route>
+        </Route>
+
+        <Route element={<ProtectedRoute />}>
+          <Route element={<RoleRoute allowedRole="student" />}>
+            <Route
+              path="/student/submission/:id/annotate"
+              element={<AnnotationViewerPage />}
+            />
           </Route>
         </Route>
 

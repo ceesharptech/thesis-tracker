@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import {
   getStudentDetail,
@@ -29,6 +29,7 @@ import {
   ArrowDown01Icon,
   ArrowUp01Icon,
   Download01Icon,
+  Pen01Icon,
   // Mic02Icon,
   // PauseIcon,
 } from "@hugeicons/core-free-icons";
@@ -47,6 +48,7 @@ const STATUS_BUTTONS: {
 
 export default function StudentProjectPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [student, setStudent] = useState<Student | null>(null);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [comments, setComments] = useState<Record<string, Comment[]>>({});
@@ -308,15 +310,37 @@ export default function StudentProjectPage() {
                       )}
                     </span>
                   </div>
-                  <a
-                    href={`${import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"}${sub.fileUrl}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sm text-tf-blue-700 hover:underline flex gap-2"
-                  >
-                    <HugeiconsIcon icon={Download01Icon} size={18} />
-                    Download {sub.fileName}
-                  </a>
+                  <div className="flex gap-3 items-center">
+                    <a
+                      href={`${import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"}${sub.fileUrl}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-sm text-tf-blue-700 hover:underline flex gap-2"
+                    >
+                      <HugeiconsIcon icon={Download01Icon} size={18} />
+                      Download {/* {sub.fileName} */}
+                    </a>
+
+                    {/* Annotate button — navigates to full-screen annotation editor.
+                     * Passes submission + student via route state so the editor page
+                     * avoids needing a GET /supervisor/submissions/{id} endpoint.
+                     * @see ThesisFlow Annotation Implementation Plan § 5.5
+                     */}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        navigate(`/supervisor/submission/${sub.id}/annotate`, {
+                          state: { submission: sub, student },
+                        })
+                      }
+                      className="rounded-xl border-tf-gray-200 text-tf-gray-700 hover:text-tf-black hover:bg-tf-gray-50 text-xs h-8 px-3 flex items-center gap-1.5"
+                    >
+                      {/* Pencil icon */}
+                      <HugeiconsIcon icon={Pen01Icon} size={18} />
+                      Annotate
+                    </Button>
+                  </div>
                 </div>
                 {sub.studentNote && (
                   <p className="text-sm text-tf-gray-600 mt-3">

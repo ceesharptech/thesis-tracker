@@ -156,10 +156,14 @@ const mapAnnotation = (raw: RawAnnotation): Annotation => ({
 
 /**
  * GET /student/submissions/{id}/annotations
- * Returns all annotations for a submission (read-only for the student).
- * Restricted server-side to submissions belonging to the requesting student.
+ * Fetches all annotations left by the supervisor on a specific submission.
+ * This is the student-facing view — read-only, restricted server-side to
+ * submissions belonging to the requesting student.
+ *
+ * Named `getSubmissionAnnotations` (not `getAnnotations`) to avoid the
+ * barrel export collision in lib/api/index.ts with supervisor.getAnnotations.
  */
-export const getSupervisorAnnotations = async (
+export const getSubmissionAnnotations = async (
   submissionId: string,
 ): Promise<Annotation[]> => {
   const res = await client.get(
