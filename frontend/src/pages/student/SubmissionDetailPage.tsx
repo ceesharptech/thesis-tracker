@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { getSubmissionDetail, getSubmissionComments, getSubmissionAnnotations } from "@/lib/api/student";
+import { getSubmissionDetail, getSubmissionComments } from "@/lib/api/student";
 import { getErrorMessage } from "@/lib/error";
 import PageWrapper from "@/components/layout/PageWrapper";
 import ChapterBadge from "@/components/shared/ChapterBadge";
@@ -19,26 +19,24 @@ export default function SubmissionDetailPage() {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   /**
-   * WORKAROUND: annotation count fetched separately because SubmissionResponse
-   * does not yet include annotation_count from the backend.
-   * TODO: Once backend adds annotation_count to SubmissionResponse, read it
-   * from submission.annotationCount and remove this secondary fetch.
+   * Annotation count — temporarily hardcoded to 0.
+   * The old getSubmissionAnnotations() function was removed as part of the
+   * EmbedPDF migration. The new annotation system uses a different persistence
+   * model (see ANNOTATION_FEATURE_CONTEXT.md § 5).
+   * TODO(Phase 6): Wire annotation count from the new mock persistence layer
+   * or from backend once annotation_count is on SubmissionResponse.
    */
-  const [annotationCount, setAnnotationCount] = useState(0);
+  const annotationCount: number = 0;
 
   useEffect(() => {
     if (!id) return;
     Promise.all([
       getSubmissionDetail(id),
       getSubmissionComments(id),
-      // WORKAROUND: fetch annotations just to get the count for the button.
-      // Remove once backend exposes annotation_count on SubmissionResponse.
-      getSubmissionAnnotations(id).catch(() => []),
     ])
-      .then(([subData, commentsData, annotationsData]) => {
+      .then(([subData, commentsData]) => {
         setSubmission(subData);
         setComments(commentsData);
-        setAnnotationCount((annotationsData as { length: number }).length);
       })
       .catch((err) =>
         toast.error(getErrorMessage(err) || "Failed to load submission"),

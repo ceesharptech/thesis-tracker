@@ -89,47 +89,15 @@ export interface StudentImportRow {
   errors: string[];
 }
 
-// ─── Annotation feature types ────────────────────────────────────────────────
-// Added for PDF/DOCX inline annotation feature.
-// @see ThesisFlow Annotation Implementation Plan § 5.2
+// ─── Annotation feature types (EmbedPDF-based) ──────────────────────────────
+// The new annotation system uses EmbedPDF's native PdfHighlightAnnoObject type
+// with our custom data in the `custom` field. Types for the new system are
+// defined in ANNOTATION_FEATURE_CONTEXT.md § 4 and will be added here when
+// needed (Phase 2+). The old pdfjs-based AnnotationRect / Annotation /
+// PendingAnnotation types have been removed as part of the EmbedPDF migration.
 
-/**
- * A single highlight rectangle stored as page-fraction coordinates (0.0–1.0).
- * Zoom-independent: multiply by the rendered page pixel dimensions to get
- * absolute pixel positions for rendering.
- */
-export interface AnnotationRect {
-  x: number;      // fraction of page width,  0.0–1.0
-  y: number;      // fraction of page height, 0.0–1.0
-  width: number;  // fraction of page width
-  height: number; // fraction of page height
-}
-
-/**
- * A fully saved annotation as returned by the backend.
- * NOTE: the backend stores `rects` as a JSON string. Parsing/stringifying
- * happens exclusively in the API layer (supervisor.ts / student.ts).
- * All components always receive AnnotationRect[], never raw strings.
- */
-export interface Annotation {
-  id: string;
-  submissionId: string;
-  pageNumber: number;
-  rects: AnnotationRect[];  // parsed from JSON string on receipt
-  selectedText: string;
-  comment: string;
+export interface AnnotationCustomData {
+  resolved: boolean;
   authorId: string;
   authorName: string;
-  resolved: boolean;
-  createdAt: string;        // ISO 8601 string
-}
-
-/**
- * A text selection in progress that has not yet been saved as an Annotation.
- * Exists only in local component state while CommentPopup is open.
- */
-export interface PendingAnnotation {
-  pageNumber: number;
-  rects: AnnotationRect[];
-  selectedText: string;
 }

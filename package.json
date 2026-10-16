@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@embedpdf/plugin-zoom": "^2.15.1"
+  }
+}

@@ -10,8 +10,8 @@ import SupervisorSettings from "@/pages/supervisor/SupervisorSettings";
 import StudentDashboard from "@/pages/student/StudentDashboard";
 import SubmissionDetailPage from "@/pages/student/SubmissionDetailPage";
 import StudentSettings from "@/pages/student/StudentSettings";
-import AnnotationEditorPage from "@/pages/supervisor/AnnotationEditorPage";
-import AnnotationViewerPage from "@/pages/student/AnnotationViewerPage";
+// ⚠️  TEMP: annotation test route — remove after frontend approval
+import AnnotationTestPage from "@/pages/dev/AnnotationTestPage";
 import AppShell from "@/components/layout/AppShell";
 import ProtectedRoute from "@/router/ProtectedRoute";
 import RoleRoute from "@/router/RoleRoute";
@@ -94,28 +94,15 @@ export default function App() {
         </Route>
 
         {/*
-         * Annotation routes — OUTSIDE AppShell (no sidebar/topbar from the shell).
-         * These pages manage their own full-screen topbar internally.
-         * Still protected by ProtectedRoute + RoleRoute guards.
-         * @see ThesisFlow Annotation Implementation Plan § 5.5 (new routes)
+         * Annotation routes — OUTSIDE AppShell.
+         * Real supervisor/student annotation pages will be added in Phase 6
+         * once the annotation feature is fully built and tested via the
+         * test route below.
+         * @see ANNOTATION_FEATURE_CONTEXT.md § 10 Phase 6
          */}
-        <Route element={<ProtectedRoute />}>
-          <Route element={<RoleRoute allowedRole="supervisor" />}>
-            <Route
-              path="/supervisor/submission/:id/annotate"
-              element={<AnnotationEditorPage />}
-            />
-          </Route>
-        </Route>
 
-        <Route element={<ProtectedRoute />}>
-          <Route element={<RoleRoute allowedRole="student" />}>
-            <Route
-              path="/student/submission/:id/annotate"
-              element={<AnnotationViewerPage />}
-            />
-          </Route>
-        </Route>
+        {/* ⚠️  TEMP: annotation test route — remove after frontend approval */}
+        <Route path="/annotation-test" element={<AnnotationTestPage />} />
 
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="*" element={<Navigate to="/login" replace />} />

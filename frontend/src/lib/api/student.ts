@@ -4,8 +4,6 @@ import type {
   Comment,
   ChapterLabel,
   SupervisorNote,
-  Annotation,
-  AnnotationRect,
 } from "@/types";
 
 type RawSubmission = {
@@ -122,63 +120,8 @@ export const getSupervisorNotes = async (): Promise<SupervisorNote[]> => {
   }
 };
 
-// ─── Annotation API functions (Annotation feature § 5.3) ─────────────────────
-// All rects are stored as JSON strings in the backend but exposed as
-// AnnotationRect[] here. JSON.parse / JSON.stringify happen only in this layer.
-
-/** Raw annotation shape returned by the backend before camelCase mapping. */
-type RawAnnotation = {
-  id: string;
-  submission_id: string;
-  page_number: number;
-  rects: string; // JSON string of AnnotationRect[]
-  selected_text: string;
-  comment: string;
-  author_id: string;
-  author_name: string;
-  resolved: boolean;
-  created_at: string;
-};
-
-/** Maps a raw backend annotation to the frontend Annotation type. */
-const mapAnnotation = (raw: RawAnnotation): Annotation => ({
-  id: raw.id,
-  submissionId: raw.submission_id,
-  pageNumber: raw.page_number,
-  rects: JSON.parse(raw.rects) as AnnotationRect[],
-  selectedText: raw.selected_text,
-  comment: raw.comment,
-  authorId: raw.author_id,
-  authorName: raw.author_name,
-  resolved: raw.resolved,
-  createdAt: raw.created_at,
-});
-
-/**
- * GET /student/submissions/{id}/annotations
- * Fetches all annotations left by the supervisor on a specific submission.
- * This is the student-facing view — read-only, restricted server-side to
- * submissions belonging to the requesting student.
- *
- * Named `getSubmissionAnnotations` (not `getAnnotations`) to avoid the
- * barrel export collision in lib/api/index.ts with supervisor.getAnnotations.
- */
-export const getSubmissionAnnotations = async (
-  submissionId: string,
-): Promise<Annotation[]> => {
-  const res = await client.get(
-    `/student/submissions/${submissionId}/annotations`,
-  );
-  return (res.data as RawAnnotation[]).map(mapAnnotation);
-};
-
-/**
- * PATCH /student/annotations/{id}/resolve
- * Marks a single annotation as resolved by the student.
- * Validated server-side: annotation must belong to the requesting student's submission.
- */
-export const resolveAnnotation = async (
-  annotationId: string,
-): Promise<void> => {
-  await client.patch(`/student/annotations/${annotationId}/resolve`);
-};
+// ─── Annotation API functions ────────────────────────────────────────────────
+// The old pdfjs-based annotation API functions (getSubmissionAnnotations,
+// resolveAnnotation, RawAnnotation, mapAnnotation) have been removed.
+// The new annotation system uses EmbedPDF with mock persistence via
+// src/lib/api/mockAnnotations.ts — see ANNOTATION_FEATURE_CONTEXT.md § 5.
