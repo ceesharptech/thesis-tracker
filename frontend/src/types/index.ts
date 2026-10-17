@@ -100,4 +100,9 @@ export interface AnnotationCustomData {
   resolved: boolean;
   authorId: string;
   authorName: string;
+  /**
+   * The highlighted PDF text. Set by EmbedPDF's highlight tool at creation
+   * (`custom.text`); preserved when our fields are merged in on comment save.
+   */
+  text?: string;
 }

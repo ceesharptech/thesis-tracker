@@ -59,8 +59,10 @@ npm install @embedpdf/core @embedpdf/engines \
   @embedpdf/plugin-document-manager @embedpdf/plugin-viewport \
   @embedpdf/plugin-scroll @embedpdf/plugin-render \
   @embedpdf/plugin-annotation @embedpdf/plugin-interaction-manager \
-  @embedpdf/plugin-selection @embedpdf/plugin-history
+  @embedpdf/plugin-selection @embedpdf/plugin-history @embedpdf/plugin-zoom
 ```
+(`@embedpdf/plugin-zoom` was added in Phase 2 to support the temporary toolbar
+zoom controls used to verify highlight accuracy at different zoom levels.)
 No manual worker file copying is needed — the engine package bundles cleanly
 with Vite out of the box.
 
@@ -191,6 +193,8 @@ Requirements:
 - "Highlight" button: `annotationApi.setActiveTool('highlight')`
 - "Delete" button: deletes the currently selected annotation, disabled when
   nothing is selected
+- Temporary −/+ zoom controls (Phase 2 test aid, may be replaced or removed
+  later)
 - "Save" button (or autosave on every annotation event): calls
   `exportAnnotations()` then `saveAnnotationsData()`
 

@@ -24,14 +24,27 @@ const HIGHLIGHT_TOOL_ID = "highlight";
 
 interface AnnotationToolbarProps {
   documentId: string;
+  /** Autosave status shown at the right of the action buttons. */
+  saveStatus?: SaveStatus;
 }
+
+export type SaveStatus = "idle" | "saving" | "saved" | "error";
+
+const STATUS_LABEL: Record<Exclude<SaveStatus, "idle">, string> = {
+  saving: "Saving…",
+  saved: "Saved",
+  error: "Save failed",
+};
 
 const baseBtn =
   "px-4 py-2 text-sm font-medium rounded-xl border transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed";
 const idleBtn = "border-tf-gray-200 text-tf-gray-700 bg-white hover:bg-tf-gray-100";
 const activeBtn = "border-tf-black bg-tf-black text-white";
 
-export default function AnnotationToolbar({ documentId }: AnnotationToolbarProps) {
+export default function AnnotationToolbar({
+  documentId,
+  saveStatus = "idle",
+}: AnnotationToolbarProps) {
   const { state, provides } = useAnnotation(documentId);
   const { state: zoomState, provides: zoom } = useZoom(documentId);
 
@@ -76,6 +89,22 @@ export default function AnnotationToolbar({ documentId }: AnnotationToolbarProps
         >
           Delete
         </button>
+        {saveStatus !== "idle" && (
+          <span
+            id="annotation-save-status"
+            role="status"
+            className={`ml-2 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium ${
+              saveStatus === "error"
+                ? "border-red-200 bg-red-50 text-red-700"
+                : "border-tf-gray-200 bg-tf-gray-50 text-tf-gray-600"
+            }`}
+          >
+            {saveStatus === "saving" && (
+              <span className="h-2.5 w-2.5 animate-spin rounded-full border border-tf-gray-300 border-t-tf-black" />
+            )}
+            {STATUS_LABEL[saveStatus]}
+          </span>
+        )}
       </div>
 
       {/* TEMPORARY zoom controls — Phase 2 verification only */}
